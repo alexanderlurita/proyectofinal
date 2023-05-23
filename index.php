@@ -1,11 +1,3 @@
-<?php
-session_start();
-
-if (!isset($_SESSION['seguridad']) || !$_SESSION['seguridad']['login']) {
-  header('Location:./login.php');
-}
-?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -13,10 +5,12 @@ if (!isset($_SESSION['seguridad']) || !$_SESSION['seguridad']['login']) {
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Restaurante</title>
+
+  <!-- Bootstrap 5.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+
 </head>
 <body>
-
-  <a id="logout" href="./controllers/Usuario.controller.php?operacion=logout">Cerrar sesión</a>
-  
+  <a class="btn btn-success rounded" href="./login.php">Login</a>
 </body>
 </html>

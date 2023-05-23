@@ -43,7 +43,7 @@ if (isset($_GET['operacion'])) {
   if ($_GET['operacion'] == 'logout') {
     session_destroy();
     session_unset();
-    header('Location:../login.php');
+    header('Location:../index.php');
   }
 }
 

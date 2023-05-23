@@ -1,7 +1,7 @@
 <?php
 session_start();
 if(isset($_SESSION['seguridad']) && $_SESSION['seguridad']['login']) {
-  header('Location:./index.php');
+  header('Location:./dashboard.php');
 }
 ?>
 
@@ -35,8 +35,8 @@ if(isset($_SESSION['seguridad']) && $_SESSION['seguridad']['login']) {
         <div class="col-md-6 right-box">
           <div class="row align-items-center">
             <div class="header-text mb-4">
-              <h2>Hello, Again</h2>
-              <p>We are happy to have to back.</p>
+              <h2>¡Bienvenido!</h2>
+              <p>Inicia sesión con tu cuenta para continuar.</p>
             </div>
             <!-- Form input-groups -->
             <form action="" autocomplete="off">

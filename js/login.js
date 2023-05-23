@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert(data.mensaje)
           } else {
             alert(`¡Inicio de sesión correcto! Bienvenido ${data.nombres}`)
-            location.href = './index.php';
+            location.href = './dashboard.php';
           }
         })
     }
