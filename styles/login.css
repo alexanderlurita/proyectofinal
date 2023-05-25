@@ -5,6 +5,14 @@ body{
   background: #ececec;
 }
 
+.left-box{
+  background-color: #F56D15;
+}
+
+#login{
+  background: #F56D15;
+}
+
 .box-area{
   width: 930px;
 }
@@ -26,6 +34,10 @@ body{
   .left-box{
     height: 100px;
     overflow: hidden;
+  }
+
+  #logo{
+    margin-top: 50px;
   }
 
   .right-box{
