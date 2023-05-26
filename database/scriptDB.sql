@@ -71,8 +71,10 @@ CREATE TABLE productos
 	nombreproducto		VARCHAR(50)	NOT NULL,
 	descripcion		VARCHAR(150)	NULL,
 	precio			DECIMAL(7,2)	NOT NULL,
+	stock			TINYINT 	NULL,
+	CONSTRAINT uk_producto_pla UNIQUE (tipoproducto, nombreproducto),
 	CONSTRAINT ck_precio_pla CHECK (precio > 0),
-	CONSTRAINT uk_producto_pla UNIQUE (tipoproducto, nombreproducto)
+	CONSTRAINT ck_stock_pla CHECK (stock >= 0)
 ) ENGINE = INNODB;
 
 CREATE TABLE ventas
@@ -82,7 +84,6 @@ CREATE TABLE ventas
 	idcliente		INT 		NOT NULL, -- FK
 	idempleado		INT 		NOT NULL, -- FK
 	fechahoraventa		DATETIME	NOT NULL DEFAULT NOW(),
-	montototal		DECIMAL(7,2)	NULL,
 	tipocomprobante		CHAR(1)		NULL, -- B(Boleta), F(Factura)
 	numcomprobante		CHAR(10)	NULL, -- Se generará automáticamente
 	estado			CHAR(2)		NOT NULL DEFAULT 'PE', -- PA(Pagado), PE(Pendiente), CA(Cancelado)
@@ -125,7 +126,9 @@ INSERT INTO personas (apellidos, nombres, telefono, correo, direccion) VALUES
 	('Pino Miranda', 'Maria', NULL, NULL, NULL),
 	('Campos Perez', 'Cintia', NULL, NULL, 'Cl. Abigail Pulido # 760'),
 	('Cartagena Magallanes', 'Nicole', NULL, NULL, NULL),
-	('Lurita Chávez', 'Alexander', '977522216', 'alexanderlu244@gmail.com', 'Tambo Cañete La Garita km 213');
+	('Lurita Chávez', 'Alexander', '977522216', 'alexanderlu244@gmail.com', 'Tambo Cañete La Garita km 213'),
+	('Mendoza Quispe', 'Carlos', '987102030', NULL, NULL),
+	('Ramirez', 'Mireya', NULL, NULL, NULL);
 	
 INSERT INTO turnos (turno, horainicio, horafin) VALUES
 	('Mañana', '08:00:00', '12:00:00'),
@@ -148,19 +151,35 @@ INSERT INTO mesas (nombremesa, capacidad) VALUES
 	('Mesa 4', 6),
 	('Mesa 5', 2);
 	
-INSERT INTO productos (tipoproducto, nombreproducto, descripcion, precio) VALUES
-	('Entrada', 'Tequeños de Lomo Saltado', '8 unidades de tequeños rellenos de lomo saltado criollo con guacamole', 20),
-	('Entrada', 'Club Sandwich', 'Pollo, jamón, queso, palta, lechuga y tomate acompañado de papas fritas', 25),
-	('Plato de fondo', 'Rocoto Relleno', 'Tradicional rocoto relleno arequipeño, acompañado de pastel de papas', 45),
-	('Plato de fondo', 'Lomo Saltado', 'Clásico lomo fino saltado de res acompañado de papas fritas y arroz blanco', 64),
-	('Postre', 'Charlotte de maracuya', 'Charlotte de maracuyá, naranja y muña', 32),
-	('Bebida', 'Inca Kola 600ml', 'Vaso de Inca Kola + hielos', 5);
+INSERT INTO productos (tipoproducto, nombreproducto, descripcion, precio, stock) VALUES
+	('Entrada', 'Tequeños de Lomo Saltado', '8 unidades de tequeños rellenos de lomo saltado criollo con guacamole', 20, NULL),
+	('Entrada', 'Club Sandwich', 'Pollo, jamón, queso, palta, lechuga y tomate acompañado de papas fritas', 25, NULL),
+	('Plato de fondo', 'Rocoto Relleno', 'Tradicional rocoto relleno arequipeño, acompañado de pastel de papas', 45, NULL),
+	('Plato de fondo', 'Lomo Saltado', 'Clásico lomo fino saltado de res acompañado de papas fritas y arroz blanco', 64, NULL),
+	('Postre', 'Charlotte de maracuya', 'Charlotte de maracuyá, naranja y muña', 32, 20),
+	('Bebida', 'Inca Kola 600ml', 'Vaso de Inca Kola + hielos', 5, 16),
+	('Entrada', 'Anticucho de corazón especial', 'Dos palitos de trozos tiernos de corazón de res, acompañados con choclo José Antonio, papa dorada y salsa criolla', 25, NULL),
+	('Plato de fondo', 'Cau Cau', 'Receta en base a trozos de mondongo y papa, acompañada con arroz blanco', 40, NULL),
+	('Bebida', 'Chicha morada', 'Vaso grande de chicha morada + hielos', 5, NULL);
+
+INSERT INTO ventas(idmesa, idcliente, idempleado, tipocomprobante, numcomprobante, estado) VALUES
+	(2, 7, 2, 'B', 'BOL-000001', 'PA'),
+	(3, 8, 2, 'B', 'BOL-000002', 'PA');
+	
+INSERT INTO detalle_venta(idventa, idproducto, cantidad, precioproducto) VALUES
+	(1, 1, 2, 20),
+	(1, 8, 2, 40),
+	(1, 9, 2, 5),
+	(2, 5, 2, 20),
+	(2, 6, 2, 5);
 
 /*SELECT * FROM personas;
 SELECT * FROM empleados;
 SELECT * FROM usuarios;
 SELECT * FROM mesas;
-SELECT * FROM productos;*/
+SELECT * FROM productos;
+select * from ventas; 
+select * from detalle_venta*/
 
 -- PROCEDIMIENTOS ALMACENADOS
 -- USUARIOS
@@ -174,4 +193,34 @@ BEGIN
 		INNER JOIN empleados ON empleados.idempleado = usuarios.idempleado
 		INNER JOIN personas ON personas.idpersona = empleados.idpersona
 		WHERE usuarios.nombreusuario = _nombreusuario AND usuarios.estado = '1';
+END $$
+
+-- VENTAS
+-- LISTAR VENTAS
+DELIMITER $$
+CREATE PROCEDURE spu_ventas_listar()
+BEGIN
+	SELECT  ventas.`idventa`, 
+		mesas.`nombremesa`,
+		CONCAT(personas.`apellidos`, ' ', personas.`nombres`) 'cliente',
+		ventas.`fechahoraventa`,
+		ventas.`estado`
+		FROM ventas
+		INNER JOIN mesas ON mesas.`idmesa` = ventas.`idmesa`
+		INNER JOIN personas ON personas.`idpersona` = ventas.`idcliente`
+		ORDER BY 1 DESC;
+END $$
+
+DELIMITER $$
+CREATE PROCEDURE spu_ventas_detalles(IN _idventa INT)
+BEGIN
+	SELECT 	DET.iddetalleventa, 
+		PRO.nombreproducto, 
+		DET.cantidad, 
+		DET.precioproducto,
+		DET.cantidad * DET.precioproducto 'importe'
+		FROM detalle_venta DET
+		INNER JOIN ventas VEN ON VEN.idventa = DET.idventa
+		INNER JOIN productos PRO ON PRO.idproducto = DET.idproducto
+		WHERE DET.idventa = _idventa;
 END $$
