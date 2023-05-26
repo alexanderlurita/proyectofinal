@@ -1,38 +1,42 @@
-<div>
+<h3>Restaurante Mil Sabores</h3>
+<hr>
 
-  <h2>Prueba de vistas</h2>
-  <hr>
-
-  <div class="table-responsive">
-    <table class="table table-primary">
-      <thead>
-        <tr>
-          <th scope="col">Column 1</th>
-          <th scope="col">Column 2</th>
-          <th scope="col">Column 3</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="">
-          <td scope="row">R1C1</td>
-          <td>R1C2</td>
-          <td>R1C3</td>
-        </tr>
-        <tr class="">
-          <td scope="row">Item</td>
-          <td>Item</td>
-          <td>Item</td>
-        </tr>
-      </tbody>
-    </table>
+<div class="row">
+  <div class="col-md-6">
+    <canvas id="grafico-1"></canvas>
   </div>
-
-  <button class="btn btn-success" id="hello">saludar</button>
-
-  <script>
-    document.querySelector("#hello").addEventListener("click", () => {
-      alert("Hola!")
-    })
-  </script>
-
+  <div class="col-md-6">
+    <canvas class="grafico-2"></canvas>
+  </div>
 </div>
+
+
+<!-- ChartJS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const grafico1 = document.getElementById('grafico-1');
+    const grafico2 = document.getElementById('grafico-2');
+
+    new Chart(grafico1, {
+      type: 'bar',
+      data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [{
+          label: '# of Votes',
+          data: [12, 19, 3, 5, 2, 3],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+    
+  })
+</script>

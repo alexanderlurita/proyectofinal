@@ -18,6 +18,26 @@ class Venta extends Conexion{
       die($e->getMessage());
     }
   }
+
+  public function buscar($idventa = 0) {
+    try {
+      $consulta = $this->conexion->prepare("CALL spu_ventas_buscar(?)");
+      $consulta->execute(array($idventa));
+      return $consulta->fetch(PDO::FETCH_ASSOC);
+    } catch(Exception $e) {
+      die($e->getMessage());
+    }
+  }
+
+  public function detallar($idventa = 0) {
+    try {
+      $consulta = $this->conexion->prepare("CALL spu_ventas_detallar(?)");
+      $consulta->execute(array($idventa));
+      return $consulta->fetchAll(PDO::FETCH_ASSOC);
+    } catch(Exception $e) {
+      die($e->getMessage());
+    }
+  }
   
 }
 

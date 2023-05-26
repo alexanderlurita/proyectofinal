@@ -5,9 +5,9 @@ body{
 }
 
 .nav-pills li a:hover{
-  background-color: rgb(66,66,243);
+  background-color: #F56D15;
 }
 
-i{
+#menu li a i{
   font-size: 20px;
 }

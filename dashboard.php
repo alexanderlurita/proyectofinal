@@ -3,17 +3,23 @@ session_start();
 
 if (!isset($_SESSION['seguridad']) || !$_SESSION['seguridad']['login']) {
   header('Location:./index.php');
+} else {
+  $username = $_SESSION['seguridad']['nombres'] . ' ' . $_SESSION['seguridad']['apellidos'];
 }
 
 $vista = isset($_GET['vista']) ? $_GET['vista'] : 'inicio';
 
-if ($vista === 'venta') {
-  $contenido = './views/Venta.view.php';
-} elseif ($vista === 'producto'){
-  $contenido = './views/Producto.view.php';
-} else {
-  $contenido = './views/Inicio.view.php';
-}
+switch ($vista) {
+  case 'venta':
+    $contenido =  './views/Venta.view.php';
+    break;
+  case 'producto':
+    $contenido = './views/Producto.view.php';
+    break;
+  default:
+    $contenido = './views/Inicio.view.php';
+    break;
+} 
 
 ?>
 
@@ -37,24 +43,24 @@ if ($vista === 'venta') {
       <div class="d-flex flex-column justify-content-between col-auto bg-dark min-vh-100">
         <div class="mt-4">
           <a class="text-white d-none d-sm-inline text-decoration-none d-flex align-items-center ms-4" role="button">
-            <span>Restaurante</span>
+            <span class="fs-5">MIL SABORES</span>
           </a>
 
           <hr class="text-white d-none d-sm-block">
 
           <ul class="nav nav-pills flex-column mt-2 mt-sm-0" id="menu">
             <li class="nav-item my-sm-1 my-2">
-              <a href="./dashboard.php" class="nav-link text-white text-center text-sm-start">
+              <a href="dashboard.php" class="nav-link text-white text-center text-sm-start">
                 <i class="fa-solid fa-house"></i> <span class="ms-2 d-none d-sm-inline">Inicio</span>
               </a>
             </li>
             <li class="nav-item my-sm-1 my-2">
-              <a id="ventas" href="./dashboard.php?vista=venta" class="nav-link text-white text-center text-sm-start">
+              <a id="ventas" href="dashboard.php?vista=venta" class="nav-link text-white text-center text-sm-start">
                 <i class="fa-solid fa-piggy-bank"></i> <span class="ms-2 d-none d-sm-inline">Ventas</span>
               </a>
             </li>
             <li class="nav-item my-sm-1 my-2">
-              <a id="productos" href="./dashboard.php?vista=producto" class="nav-link text-white text-center text-sm-start">
+              <a id="productos" href="#" class="nav-link text-white text-center text-sm-start">
                 <i class="fa-solid fa-burger"></i> <span class="ms-2 d-none d-sm-inline">Productos</span>
               </a>
             </li>
@@ -89,15 +95,9 @@ if ($vista === 'venta') {
         </div>
         <div>
           <div class="dropdown open">
-            <a class="btn border-none outline-none text-white dropdown-toggle" type="button" id="triggerId" data-bs-toggle="dropdown" aria-haspopup="true"
-                aria-expanded="false">
+            <a class="btn border-none outline-none text-white dropdown-toggle" type="button" id="triggerId" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <i class="fa-solid fa-user"></i>
-                  <?php
-                    if (isset($_SESSION['seguridad']) && $_SESSION['seguridad']['login']) {
-                      $username = $_SESSION['seguridad']['nombres'] . ' ' . $_SESSION['seguridad']['apellidos'];
-                      echo '<span class="ms-1 d-none d-sm-inline">' . $username . '</span>';
-                    }
-                  ?>
+                  <span class="ms-1 d-none d-sm-inline"><?php echo $username; ?></span>
                 </a>
             <div class="dropdown-menu" aria-labelledby="triggerId">
               <a class="dropdown-item" href="#">Perfil</a>
@@ -118,29 +118,11 @@ if ($vista === 'venta') {
   
   <!-- Bootstrap 5.3 -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js" integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ" crossorigin="anonymous"></script>
 
   <!-- FontAwesome -->
   <script src="https://kit.fontawesome.com/f5edb5ee55.js" crossorigin="anonymous"></script>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const contenedorVistas = document.querySelector("#contenedor-vistas")
-      const btVentas = document.querySelector("#ventas")
-      const btProductos = document.querySelector("#productos")
-      
-      btVentas.addEventListener("click", () => {
-        const pm = new URLSearchParams()
-        pm.append("operacion", "cargaVentas")
-
-        fetch("./views/Venta.view.php", {
-          method: 'GET'
-        })
-          .then(response => response.text())
-          .then(data => {
-            contenedorVistas.innerHTML = data;
-          })
-      })
-    })
-  </script>
+  
 </body>
 </html>

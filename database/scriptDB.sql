@@ -211,8 +211,29 @@ BEGIN
 		ORDER BY 1 DESC;
 END $$
 
+-- BUSCAR VENTA
 DELIMITER $$
-CREATE PROCEDURE spu_ventas_detalles(IN _idventa INT)
+CREATE PROCEDURE spu_ventas_buscar(IN _idventa INT)
+BEGIN
+	SELECT  ventas.`idventa`, 
+		mesas.`nombremesa`,
+		CONCAT(p1.`apellidos`, ' ', p1.`nombres`) 'cliente',
+		CONCAT(p2.apellidos, ' ', p2.nombres) 'mesero',
+		ventas.`fechahoraventa`,
+		ventas.`tipocomprobante`,
+		ventas.`numcomprobante`,
+		ventas.`estado`
+		FROM ventas
+		INNER JOIN mesas ON mesas.`idmesa` = ventas.`idmesa`
+		INNER JOIN personas p1 ON p1.`idpersona` = ventas.`idcliente`
+		INNER JOIN empleados ON empleados.`idempleado` = ventas.`idempleado`
+		INNER JOIN personas p2 ON p2.idpersona = empleados.`idpersona`
+		WHERE ventas.`idventa` = _idventa;
+END $$
+
+-- DETALLAR VENTA
+DELIMITER $$
+CREATE PROCEDURE spu_ventas_detallar(IN _idventa INT)
 BEGIN
 	SELECT 	DET.iddetalleventa, 
 		PRO.nombreproducto, 
@@ -224,3 +245,6 @@ BEGIN
 		INNER JOIN productos PRO ON PRO.idproducto = DET.idproducto
 		WHERE DET.idventa = _idventa;
 END $$
+
+CALL spu_ventas_detallar(1);
+CALL spu_ventas_buscar(1);
