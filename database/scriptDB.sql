@@ -246,5 +246,22 @@ BEGIN
 		WHERE DET.idventa = _idventa;
 END $$
 
-CALL spu_ventas_detallar(1);
-CALL spu_ventas_buscar(1);
+-- MESAS
+-- LISTAR
+DELIMITER $$
+CREATE PROCEDURE spu_mesas_listar(IN _estado CHAR(1)) 
+BEGIN
+	SELECT *
+		FROM mesas
+		WHERE estado = _estado;
+END $$
+
+-- PRODUCTOS
+-- LISTAR
+DELIMITER $$
+CREATE PROCEDURE spu_productos_cargaropciones()
+BEGIN
+	SELECT idproducto, nombreproducto, precio, stock
+		FROM productos
+		ORDER BY nombreproducto;
+END $$

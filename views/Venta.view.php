@@ -53,22 +53,24 @@
               <label for="md-mesas" class="col-form-label">Mesa:</label>
             </div>
             <div class="col-md-2">
-              <select name="md-mesas" id="md-mesas" class="form-select" autofocus></select>
+              <select name="md-mesas" id="md-mesas" class="form-select">
+                <option value="">Seleccione</option>
+              </select>
             </div>
           </div>
           <hr>
           <div class="row">
             <div class="col-md-5">
-              <label for="" class="col-form-label">Producto:</label>
+              <label class="col-form-label">Producto:</label>
             </div>
             <div class="col-md-2">
-              <label for="" class="col-form-label">Cantidad:</label>
+              <label class="col-form-label">Cantidad:</label>
             </div>
             <div class="col-md-2">
-              <label for="" class="col-form-label">Precio:</label>
+              <label class="col-form-label">Precio:</label>
             </div>
             <div class="col-md-2">
-              <label for="" class="col-form-label">Importe:</label>
+              <label class="col-form-label">Importe:</label>
             </div>
             <div class="col-md-1">
               <button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i></button>
@@ -76,18 +78,20 @@
           </div>
 
           <div>
-            <div class="row">
+            <div class="row" data-fila="1">
               <div class="col-md-5">
-                <select name="" class="form-select"></select>
+                <select class="form-select select-productos">
+                  <option value="">Seleccione</option>
+                </select>
               </div>
               <div class="col-md-2">
-                <input type="number" class="form-control">
+                <input type="number" class="form-control md-cantidad">
               </div>
               <div class="col-md-2">
-                <input type="number" class="form-control" readonly>
+                <input type="number" class="form-control md-precio" readonly>
               </div>
               <div class="col-md-2">
-                <input type="number" class="form-control" readonly>
+                <input type="number" class="form-control md-subtotal" readonly>
               </div>
               <div class="col-md-1">
                 <button type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-minus"></i></button>
@@ -208,22 +212,20 @@
         .then(data => {
           tableBody.innerHTML = '';
           data.forEach(element => {
+            let estado = (element.estado === "PA") ? "Pagado" : (element.estado === "PE") ? "Pendiente" : "Cancelado";
             const row = `
               <tr>
                 <td>${element.idventa}</td>
                 <td>${element.nombremesa}</td>
                 <td>${element.cliente}</td>
                 <td>${element.fechahoraventa}</td>
-                <td>${element.estado}</td>
+                <td>${estado}</td>
                 <td>
                   <a class='detallar btn btn-primary btn-sm' data-idventa='${element.idventa}'>
                     <i class="fa-solid fa-list"></i>
                   </a>
                   <a class='cambiar-estado btn btn-success btn-sm' data-idventa='${element.idventa}'>
-                    <i class="fa-solid fa-pencil"></i>
-                  </a>
-                  <a class='eliminar btn btn-danger btn-sm' data-idventa='${element.idventa}'>
-                    <i class="fa-solid fa-trash"></i>
+                    <i class="fa-solid fa-money-check-dollar"></i>
                   </a>
                 </td>
               </tr>
@@ -300,6 +302,46 @@
           alert("Problemas al consultar los detalles")
         })
     }
+    
+    function loadTables() {
+      const pm = new URLSearchParams()
+      pm.append("operacion", "listar")
+      pm.append("estado", "D")
+      fetch("./controllers/Mesa.controller.php", {
+        method: "POST",
+        body: pm
+      })
+        .then(response => response.json())
+        .then(data => {
+          data.forEach(element => {
+            const option = document.createElement("option")
+            option.textContent = element.nombremesa
+            option.value = element.idmesa
+            document.getElementById("md-mesas").appendChild(option)
+          });
+        })
+        
+    }
+
+    function loadProducts() {
+      const pm = new URLSearchParams()
+      pm.append("operacion", "cargarOpciones")
+      fetch("./controllers/Producto.controller.php", {
+        method: "POST",
+        body: pm
+      })     
+        .then(response => response.json())
+        .then(data => {
+          data.forEach(element => {
+            const option = document.createElement("option")
+            option.textContent = element.nombreproducto
+            option.value = element.idproducto
+            option.setAttribute("data-precio", element.precio)
+            option.setAttribute("data-stock", element.stock)
+            document.querySelector(".select-productos").appendChild(option)
+          });
+        })
+    }
 
     // Evento click en las columnas operaciones
     tableBody.addEventListener("click", (e) => {
@@ -310,8 +352,61 @@
       }
     })
 
+    //Evento change
+    document.querySelector(".select-productos").addEventListener("change", (e) => {
+      const row = e.target.closest(".row")
+      const option = e.target.options[e.target.selectedIndex]
+      
+      const price = option.dataset.precio
+      row.querySelector(".md-precio").value = price
+
+      if (row.querySelector(".md-cantidad").value) {
+        const subtotal = row.querySelector(".md-cantidad").value * price
+        row.querySelector(".md-subtotal").value = subtotal
+
+        const productSelect = row.querySelector(".select-productos")
+        const stock = productSelect.options[productSelect.selectedIndex].dataset.stock
+        if (row.querySelector(".md-cantidad").value > stock) {
+          row.querySelector(".md-cantidad").value = ""
+          row.querySelector(".md-subtotal").value = ""
+          alert("Supera el stock")
+        }
+      }
+    })
+
+    document.querySelector(".md-cantidad").addEventListener("input", (e) => {
+      const quantityInput = e.target
+      const row = quantityInput.closest(".row")
+      if (!row.querySelector(".select-productos").value) return;
+
+      const priceInput = row.querySelector(".md-precio")
+      const subtotalInput = row.querySelector(".md-subtotal")
+
+      const quantity = parseInt(quantityInput.value, 10)
+      const price = parseInt(priceInput.value, 10)
+
+      const productSelect = row.querySelector(".select-productos")
+      const stock = productSelect.options[productSelect.selectedIndex].dataset.stock
+
+      if (quantity > stock) {
+        quantityInput.value = ""
+        subtotalInput.value = ""
+        alert("Supera el stock")
+        return;
+      }
+
+      if (quantity > 0) {
+        const subtotal = quantity * price
+        subtotalInput.value = subtotal
+      } else {
+        subtotalInput.value = ""
+      }
+    })
+
     //Funciones automáticas
     loadSales()
+    loadTables()
+    loadProducts()
 
   })
 </script>
