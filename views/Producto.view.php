@@ -1,6 +1,6 @@
 <div>
 
-  <h2>Prodcutos</h2>
+  <h2>Productos</h2>
   <hr>
 
   <div class="table-responsive">
