@@ -231,6 +231,33 @@ BEGIN
 		WHERE ventas.`idventa` = _idventa;
 END $$
 
+-- REGISTRAR
+DELIMITER $$
+CREATE PROCEDURE spu_ventas_registrar
+(
+IN _idmesa		TINYINT,
+IN _idcliente		INT,
+IN _idempleado		INT
+)
+BEGIN
+	INSERT INTO ventas(idmesa, idcliente, idempleado) VALUES
+		(_idmesa, _idcliente, _idempleado);
+END $$
+
+-- REGISTRAR DETALLES
+DELIMITER $$
+CREATE PROCEDURE spu_ventas_registrar_detalle
+(
+IN _idproducto		INT,
+IN _cantidad		TINYINT,
+IN _precioproducto 	DECIMAL(7,2)
+)
+BEGIN
+	SET @ultima_venta_id = (SELECT MAX(idventa) AS 'last_id' FROM ventas);
+	INSERT INTO detalle_venta(idventa, idproducto, cantidad, precioproducto) VALUES
+		(@ultima_venta_id, _idproducto, _cantidad, _precioproducto);
+END $$
+
 -- DETALLAR VENTA
 DELIMITER $$
 CREATE PROCEDURE spu_ventas_detallar(IN _idventa INT)
@@ -265,3 +292,27 @@ BEGIN
 		FROM productos
 		ORDER BY nombreproducto;
 END $$
+
+-- PERSONAS
+DELIMITER $$
+CREATE PROCEDURE spu_personas_listar()
+BEGIN
+	SELECT *
+		FROM personas
+		ORDER BY 2,3;
+END $$
+
+-- EMPLEADOS
+DELIMITER $$
+CREATE PROCEDURE spu_empleados_listar()
+BEGIN
+	SELECT 	empleados.idempleado, personas.`apellidos`, personas.`nombres`,
+		empleados.`cargo`, empleados.`idturno`
+		FROM empleados
+		INNER JOIN personas ON personas.`idpersona` = empleados.`idpersona`
+		WHERE empleados.cargo = 'Mesero' AND empleados.estado = '1';
+END $$
+
+
+SELECT * FROM productos
+CALL spu_ventas_detallar(1)

@@ -55,9 +55,15 @@
                 <option value="">Seleccione</option>
               </select>
             </div>
-            <div class="col-md-5">
+            <div class="col-md-4">
               <label for="md-clientes" class="col-form-label fw-semibold">Cliente:</label>
               <select type="text" id="md-clientes" class="form-select">
+                <option value="">Seleccione</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="md-empleados" class="col-form-label fw-semibold">Mesero:</label>
+              <select type="text" id="md-empleados" class="form-select">
                 <option value="">Seleccione</option>
               </select>
             </div>
@@ -78,8 +84,8 @@
               <input type="number" class="form-control" id="md-precio" readonly>
             </div>
             <div class="col-md-2">
-              <label for="md-subtotal" class="col-form-label fw-semibold">Importe:</label>
-              <input type="number" class="form-control" id="md-subtotal" readonly>
+              <label for="md-importe" class="col-form-label fw-semibold">Importe:</label>
+              <input type="number" class="form-control" id="md-importe" readonly>
             </div>
             <div class="col-md-1 align-self-end">
               <button type="button" class="btn btn-primary" id="md-agregar-producto"><i class="fa-solid fa-plus"></i></button>
@@ -99,11 +105,30 @@
 
             </tbody>
           </table>
+
+          <div class="row justify-content-end mb-1">
+          <label for="md-subtotal" class="col-form-label col-sm-1 fw-semibold">Subtotal:</label>
+          <div class="col-sm-2">
+            <input id="md-subtotal" type="text" class="form-control text-end" readonly>
+          </div>
+        </div>
+        <div class="row justify-content-end mb-1">
+          <label for="md-igv" class="col-form-label col-sm-1 fw-semibold">IGV:</label>
+          <div class="col-sm-2">
+            <input id="md-igv" type="text" class="form-control text-end" readonly>
+          </div>
+        </div>
+        <div class="row justify-content-end mb-1">
+          <label for="md-total" class="col-form-label col-sm-1 fw-semibold">Total:</label>
+          <div class="col-sm-2">
+            <input id="md-total" type="text" class="form-control text-end" readonly>
+          </div>
+        </div>
         </form>
       </div> <!-- Fin body nueva venta -->
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-primary">Guardar</button>
+        <button type="button" id="md-registrar-venta" class="btn btn-primary">Guardar</button>
       </div>
     </div>
   </div>
@@ -197,9 +222,7 @@
     const table = document.querySelector("#tabla-ventas")
     const tableBody = table.querySelector("tbody")
     const mdNuevaVenta = new bootstrap.Modal(document.querySelector("#modal-nueva-venta"))
-    const modal = new bootstrap.Modal(document.querySelector("#modal-detalles-venta"))
-    
-    mdNuevaVenta.toggle()
+    const mdDetallesVenta = new bootstrap.Modal(document.querySelector("#modal-detalles-venta"))
 
     function loadSales(){
       const pm = new URLSearchParams()
@@ -223,6 +246,9 @@
                 <td>
                   <a class='detallar btn btn-primary btn-sm' data-idventa='${element.idventa}'>
                     <i class="fa-solid fa-list"></i>
+                  </a>
+                  <a class='agregar-producto btn btn-primary btn-sm' data-idventa='${element.idventa}'>
+                    <i class="fa-solid fa-plus"></i>
                   </a>
                   <a class='cambiar-estado btn btn-success btn-sm' data-idventa='${element.idventa}'>
                     <i class="fa-solid fa-money-check-dollar"></i>
@@ -267,23 +293,25 @@
           document.querySelector("#det-fechahora").value = dataSearch.fechahoraventa
           document.querySelector("#det-cliente").value = dataSearch.cliente
           document.querySelector("#det-mesero").value = dataSearch.mesero
-          document.querySelector("#det-tipocomprobante").value = dataSearch.tipocomprobante == 'B' ? 'Boleta' : 'Factura' 
+          document.querySelector("#det-tipocomprobante").value = dataSearch.tipocomprobante === 'B' ? 'Boleta' : (dataSearch.tipocomprobante === 'F' ? 'Factura' : '')
           document.querySelector("#det-numcomprobante").value = dataSearch.numcomprobante
 
           document.querySelector("#tabla-detalles tbody").innerHTML = ''
           let subtotal = 0.0
           let igv = 0.0
           let total = 0.0
+          let numRow = 1
           dataDetails.forEach(element => {
             const row = `
               <tr>
-                <td>${element.iddetalleventa}</td>
+                <td>${numRow}</td>
                 <td>${element.nombreproducto}</td>
                 <td>${element.cantidad}</td>
                 <td>${element.precioproducto}</td>
                 <td>${element.importe}</td>
               </tr>
             `
+            numRow++
             document.querySelector("#tabla-detalles tbody").innerHTML += row
             total += parseFloat(element.importe)
           });
@@ -295,7 +323,7 @@
           document.querySelector("#det-igv").value = igv.toFixed(2)
           document.querySelector("#det-total").value = total.toFixed(2)
 
-          modal.toggle()
+          mdDetallesVenta.toggle()
         })
         .catch(err => {
           console.error(err)
@@ -320,6 +348,42 @@
             document.getElementById("md-mesas").appendChild(option)
           });
         }) 
+    }
+
+    function loadCustomers() {
+      const pm = new URLSearchParams()
+      pm.append("operacion", "listar")
+      fetch("./controllers/Persona.controller.php", {
+        method: "POST",
+        body: pm
+      })
+        .then(response => response.json())
+        .then(data => {
+          data.forEach(element => {
+            const option = document.createElement("option")
+            option.textContent = element.apellidos + ' ' + element.nombres
+            option.value = element.idpersona
+            document.getElementById("md-clientes").appendChild(option)
+          });
+        }) 
+    }
+
+    function loadEmployees() {
+      const pm = new URLSearchParams()
+      pm.append("operacion", "listar")
+      fetch("./controllers/Empleado.controller.php", {
+        method: "POST",
+        body: pm
+      })
+        .then(response => response.json())
+        .then(data => {
+          data.forEach(element => {
+            const option = document.createElement("option")
+            option.textContent = element.apellidos + ' ' + element.nombres
+            option.value = element.idempleado
+            document.getElementById("md-empleados").appendChild(option)
+          });
+        })
     }
 
     function loadProducts() {
@@ -347,7 +411,7 @@
         !document.querySelector("#md-productos").value ||
         !document.querySelector("#md-cantidad").value ||
         !document.querySelector("#md-precio").value ||
-        !document.querySelector("#md-subtotal").value
+        !document.querySelector("#md-importe").value
       ) {
         alert("Seleccione un producto y la cantidad")
       } else {
@@ -355,7 +419,7 @@
         const mdProductos = document.querySelector("#md-productos")
         const mdCantidad = document.querySelector("#md-cantidad")
         const mdPrecio = document.querySelector("#md-precio")
-        const mdSubtotal = document.querySelector("#md-subtotal")
+        const mdSubtotal = document.querySelector("#md-importe")
 
         //Traemos todas las filas del cuerpo de la tabla y lo convertimos en un array
         let tableBody = document.querySelectorAll("#md-tabla-detalles tbody")
@@ -374,25 +438,31 @@
 
           //Convertimos la cantidad actualizada y el stock del producto a entero
           let quantityUpdate = parseInt(foundRow.cells[2].innerText) + parseInt(mdCantidad.value)
-          let stock = parseInt(productOption.dataset.stock)
-
-          if (quantityUpdate <= stock) {
-            //Actualizamos la fila existente
-            foundRow.cells[2].innerText = quantityUpdate
-            foundRow.cells[4].innerText = (parseFloat(foundRow.cells[4].innerText) + parseFloat(mdSubtotal.value)).toFixed(2)
+          let stock = productOption.dataset.stock === "null" ? null : parseInt(productOption.dataset.stock)
+          
+          if (stock === null) {
+            // Suma sin verificar el stock
+            foundRow.cells[2].innerText = quantityUpdate;
+            foundRow.cells[4].innerText = (parseFloat(foundRow.cells[4].innerText) + parseFloat(mdSubtotal.value)).toFixed(2);
           } else {
-            alert("Supera el stock")
+            if (quantityUpdate <= stock) {
+              //Actualizamos la fila existente
+              foundRow.cells[2].innerText = quantityUpdate
+              foundRow.cells[4].innerText = (parseFloat(foundRow.cells[4].innerText) + parseFloat(mdSubtotal.value)).toFixed(2)
+            } else {
+              alert("Supera el stock")
+            }
           }
         } else {
           //Construimos la nueva fila
           let newRow = `
-            <tr>
+            <tr data-idproducto='${mdProductos.value}'>
               <td>${rows.length + 1}</td>
               <td>${mdProductos.options[mdProductos.selectedIndex].text}</td>
               <td>${mdCantidad.value}</td>
               <td>${mdPrecio.value}</td>
               <td>${mdSubtotal.value}</td>
-              <td><button type="button" class="btn btn-sm btn-danger"><i class="fa-solid fa-minus"></i></button></td>
+              <td><button type="button" class="btn btn-sm btn-danger md-eliminar-producto"><i class="fa-solid fa-minus"></i></button></td>
             </tr>
           `
           //Agregar la fila al cuerpo de la tabla
@@ -404,12 +474,87 @@
         mdCantidad.value = ""
         mdPrecio.value = ""
         mdSubtotal.value = ""
+
+        calculateAmounts()
+      }
+    }
+
+    function calculateAmounts() {
+      let tableBody = document.querySelectorAll("#md-tabla-detalles tbody")
+      let rowsBody = Array.from(tableBody[0].children)
+      let subtotal = 0.0
+      let igv = 0.0
+      let total = 0.0
+      rowsBody.forEach(element => {
+        total += parseFloat(element.cells[4].textContent)
+      })
+
+      igv = total * 0.18
+      subtotal = total - igv
+
+      //Asignando los valores
+      document.querySelector("#md-subtotal").value = subtotal.toFixed(2)
+      document.querySelector("#md-igv").value = igv.toFixed(2)
+      document.querySelector("#md-total").value = total.toFixed(2)
+    }
+
+    function registerSale() {
+      if (
+        !document.querySelector("#md-mesas").value ||
+        !document.querySelector("#md-clientes").value ||
+        !document.querySelector("#md-empleados").value ||
+        !document.querySelector("#md-tabla-detalles tbody").childElementCount
+      ) {
+        alert("Complete los datos por favor")
+      } else {
+        if (confirm("¿Desea registrar este pedido?")) {
+          const pmVenta = new URLSearchParams()
+          pmVenta.append("operacion", "registrar")
+          pmVenta.append("idmesa", parseInt(document.querySelector("#md-mesas").value))
+          pmVenta.append("idcliente", parseInt(document.querySelector("#md-clientes").value))
+          pmVenta.append("idempleado", parseInt(document.querySelector("#md-empleados").value))
+
+          console.log(parseInt(document.querySelector("#md-clientes").value));
+
+          fetch("./controllers/Venta.controller.php", {
+            method: 'POST',
+            body: pmVenta
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                let tableBody = document.querySelectorAll("#md-tabla-detalles tbody")
+                let rowsBody = Array.from(tableBody[0].children)
+
+                rowsBody.forEach(element => {
+                  const pmDetalle = new URLSearchParams()
+                  pmDetalle.append("operacion", "registrarDetalle")
+                  pmDetalle.append("idproducto", element.dataset.idproducto)
+                  pmDetalle.append("cantidad", element.cells[2].textContent)
+                  pmDetalle.append("precioproducto", element.cells[3].textContent)
+
+                  fetch("./controllers/Venta.controller.php", {
+                    method: 'POST',
+                    body: pmDetalle
+                  })
+                    .then(response => response.json())
+                    .then(data => {
+                      console.log(data.success)
+                    })
+                })
+                mdNuevaVenta.toggle()
+                loadSales()
+              } else {
+                alert(data.message)
+              }
+            })
+        }
       }
     }
 
     // Evento click en las columnas operaciones
     tableBody.addEventListener("click", (e) => {
-      if (e.target.classList.contains('detalles') || e.target.parentElement.classList.contains('detallar')) {
+      if (e.target.classList.contains('detallar') || e.target.parentElement.classList.contains('detallar')) {
         const detallesButton = e.target.closest('.detallar');
         const idventa = detallesButton ? detallesButton.dataset.idventa : e.target.parentElement.dataset.idventa
         loadDetails(idventa)
@@ -433,15 +578,15 @@
         //Multiplicamos el valor del input por el precio de producto
         const subtotal = (parseInt(document.querySelector("#md-cantidad").value) * price).toFixed(2)
 
-        //Establecemos el valor del subtotal(importe) en el input con ID md-subtotal
-        document.querySelector("#md-subtotal").value = subtotal
+        //Establecemos el valor del subtotal(importe) en el input con ID md-importe
+        document.querySelector("#md-importe").value = subtotal
       }
 
       //Si la cantidad supera el stock
       if (document.querySelector("#md-cantidad").value > stock) {
         //Establecemos los inputs en vacios y mostramos una alerta
         document.querySelector("#md-cantidad").value = ""
-        document.querySelector("#md-subtotal").value = ""
+        document.querySelector("#md-importe").value = ""
         alert("Supera el stock")
       }
     })
@@ -457,23 +602,38 @@
 
       if (quantity > 0) {
         const subtotal = (quantity * price).toFixed(2)
-        document.querySelector("#md-subtotal").value = subtotal
+        document.querySelector("#md-importe").value = subtotal
       } else {
-        document.querySelector("#md-subtotal").value = ""
+        document.querySelector("#md-importe").value = ""
       }
 
       if (quantity > stock) {
         document.querySelector("#md-cantidad").value = ""
-        document.querySelector("#md-subtotal").value = ""
+        document.querySelector("#md-importe").value = ""
         alert("Supera el stock")
       }
     })
 
     document.querySelector("#md-agregar-producto").addEventListener("click", addToDetailsTable)
 
+    document.querySelector("#md-tabla-detalles tbody").addEventListener("click", (e) => {
+      if (
+        e.target.classList.contains('md-eliminar-producto') || 
+        e.target.parentElement.classList.contains('md-eliminar-producto')
+      ) {
+        const row = e.target.closest('tr');
+        row.remove();
+        calculateAmounts()
+      }
+    })
+
+    document.querySelector("#md-registrar-venta").addEventListener("click", registerSale)
+
     //Funciones automáticas
     loadSales()
     loadTables()
+    loadCustomers()
+    loadEmployees()
     loadProducts()
 
   })
