@@ -48,57 +48,57 @@
             <span class="col-form-label fw-semibold">Hora: <span class="fw-normal"><?php echo date('h:i:s a'); ?></span></span>
           </div>
 
-          <div class="row">
-            <div class="col-md-1">
-              <label for="md-mesas" class="col-form-label">Mesa:</label>
-            </div>
-            <div class="col-md-2">
+          <div class="row mb-5">
+            <div class="col-md-3">
+              <label for="md-mesas" class="col-form-label fw-semibold">Mesa:</label>
               <select name="md-mesas" id="md-mesas" class="form-select">
                 <option value="">Seleccione</option>
               </select>
             </div>
-          </div>
-          <hr>
-          <div class="row">
             <div class="col-md-5">
-              <label class="col-form-label">Producto:</label>
-            </div>
-            <div class="col-md-2">
-              <label class="col-form-label">Cantidad:</label>
-            </div>
-            <div class="col-md-2">
-              <label class="col-form-label">Precio:</label>
-            </div>
-            <div class="col-md-2">
-              <label class="col-form-label">Importe:</label>
-            </div>
-            <div class="col-md-1">
-              <button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i></button>
+              <label for="md-clientes" class="col-form-label fw-semibold">Cliente:</label>
+              <select type="text" id="md-clientes" class="form-select">
+                <option value="">Seleccione</option>
+              </select>
             </div>
           </div>
+          <div class="row mb-5">
+            <div class="col-md-5">
+              <label for="md-productos" class="col-form-label fw-semibold">Producto:</label>
+              <select class="form-select" id="md-productos">
+                <option value="">Seleccione</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label for="md-cantidad" class="col-form-label fw-semibold">Cantidad:</label>
+              <input type="number" class="form-control" id="md-cantidad">
+            </div>
+            <div class="col-md-2">
+              <label for="md-precio" class="col-form-label fw-semibold">Precio:</label>
+              <input type="number" class="form-control" id="md-precio" readonly>
+            </div>
+            <div class="col-md-2">
+              <label for="md-subtotal" class="col-form-label fw-semibold">Importe:</label>
+              <input type="number" class="form-control" id="md-subtotal" readonly>
+            </div>
+            <div class="col-md-1 align-self-end">
+              <button type="button" class="btn btn-primary" id="md-agregar-producto"><i class="fa-solid fa-plus"></i></button>
+            </div>
+          </div>
+          <table class="table table-sm table-striped mb-5" id="md-tabla-detalles">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Importe</th>
+              </tr>
+            </thead>
+            <tbody>
 
-          <div>
-            <div class="row" data-fila="1">
-              <div class="col-md-5">
-                <select class="form-select select-productos">
-                  <option value="">Seleccione</option>
-                </select>
-              </div>
-              <div class="col-md-2">
-                <input type="number" class="form-control md-cantidad">
-              </div>
-              <div class="col-md-2">
-                <input type="number" class="form-control md-precio" readonly>
-              </div>
-              <div class="col-md-2">
-                <input type="number" class="form-control md-subtotal" readonly>
-              </div>
-              <div class="col-md-1">
-                <button type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-minus"></i></button>
-              </div>
-            </div>
-          </div>
-          <hr>
+            </tbody>
+          </table>
         </form>
       </div> <!-- Fin body nueva venta -->
       <div class="modal-footer">
@@ -319,8 +319,7 @@
             option.value = element.idmesa
             document.getElementById("md-mesas").appendChild(option)
           });
-        })
-        
+        }) 
     }
 
     function loadProducts() {
@@ -338,9 +337,74 @@
             option.value = element.idproducto
             option.setAttribute("data-precio", element.precio)
             option.setAttribute("data-stock", element.stock)
-            document.querySelector(".select-productos").appendChild(option)
+            document.querySelector("#md-productos").appendChild(option)
           });
         })
+    }
+
+    function addToDetailsTable() {
+      if (
+        !document.querySelector("#md-productos").value ||
+        !document.querySelector("#md-cantidad").value ||
+        !document.querySelector("#md-precio").value ||
+        !document.querySelector("#md-subtotal").value
+      ) {
+        alert("Seleccione un producto y la cantidad")
+      } else {
+        //Guardamos la lista y las cajas de texto
+        const mdProductos = document.querySelector("#md-productos")
+        const mdCantidad = document.querySelector("#md-cantidad")
+        const mdPrecio = document.querySelector("#md-precio")
+        const mdSubtotal = document.querySelector("#md-subtotal")
+
+        //Traemos todas las filas del cuerpo de la tabla y lo convertimos en un array
+        let tableBody = document.querySelectorAll("#md-tabla-detalles tbody")
+        let rows = Array.from(tableBody[0].children)
+
+        let foundRow = rows.find(row => {
+          let productoName = row.cells[1].innerText
+          return productoName === mdProductos.options[mdProductos.selectedIndex].text
+        })
+        
+        if (foundRow) {
+          // Obtenemos el nombre del producto
+          let nameProduct = foundRow.cells[1].textContent
+          //Buscamos la opción en el select productos
+          let productOption = Array.from(mdProductos.options).find(option => option.text === nameProduct)
+
+          //Convertimos la cantidad actualizada y el stock del producto a entero
+          let quantityUpdate = parseInt(foundRow.cells[2].innerText) + parseInt(mdCantidad.value)
+          let stock = parseInt(productOption.dataset.stock)
+
+          if (quantityUpdate <= stock) {
+            //Actualizamos la fila existente
+            foundRow.cells[2].innerText = quantityUpdate
+            foundRow.cells[4].innerText = (parseFloat(foundRow.cells[4].innerText) + parseFloat(mdSubtotal.value)).toFixed(2)
+          } else {
+            alert("Supera el stock")
+          }
+        } else {
+          //Construimos la nueva fila
+          let newRow = `
+            <tr>
+              <td>${rows.length + 1}</td>
+              <td>${mdProductos.options[mdProductos.selectedIndex].text}</td>
+              <td>${mdCantidad.value}</td>
+              <td>${mdPrecio.value}</td>
+              <td>${mdSubtotal.value}</td>
+              <td><button type="button" class="btn btn-sm btn-danger"><i class="fa-solid fa-minus"></i></button></td>
+            </tr>
+          `
+          //Agregar la fila al cuerpo de la tabla
+          document.querySelector("#md-tabla-detalles tbody").innerHTML += newRow
+        }
+
+        //Reiniciamos lista y cajas de texto
+        mdProductos.selectedIndex = 0
+        mdCantidad.value = ""
+        mdPrecio.value = ""
+        mdSubtotal.value = ""
+      }
     }
 
     // Evento click en las columnas operaciones
@@ -352,56 +416,60 @@
       }
     })
 
-    //Evento change
-    document.querySelector(".select-productos").addEventListener("change", (e) => {
-      const row = e.target.closest(".row")
+    //Evento change de la lista productos
+    document.querySelector("#md-productos").addEventListener("change", (e) => {
+      //Traemos la opción seleccionada
       const option = e.target.options[e.target.selectedIndex]
-      
-      const price = option.dataset.precio
-      row.querySelector(".md-precio").value = price
 
-      if (row.querySelector(".md-cantidad").value) {
-        const subtotal = row.querySelector(".md-cantidad").value * price
-        row.querySelector(".md-subtotal").value = subtotal
+      //Accedemos a los dataset precio y stock de la opción
+      const price = parseFloat(option.dataset.precio).toFixed(2)
+      const stock = parseInt(option.dataset.stock)
 
-        const productSelect = row.querySelector(".select-productos")
-        const stock = productSelect.options[productSelect.selectedIndex].dataset.stock
-        if (row.querySelector(".md-cantidad").value > stock) {
-          row.querySelector(".md-cantidad").value = ""
-          row.querySelector(".md-subtotal").value = ""
-          alert("Supera el stock")
-        }
+      //Establecemos el valor del precio en el input con ID md-precio
+      document.querySelector("#md-precio").value = price
+
+      //Si existe algún valor en el input con ID md-precio
+      if (document.querySelector("#md-cantidad").value > 0) {
+        //Multiplicamos el valor del input por el precio de producto
+        const subtotal = (parseInt(document.querySelector("#md-cantidad").value) * price).toFixed(2)
+
+        //Establecemos el valor del subtotal(importe) en el input con ID md-subtotal
+        document.querySelector("#md-subtotal").value = subtotal
+      }
+
+      //Si la cantidad supera el stock
+      if (document.querySelector("#md-cantidad").value > stock) {
+        //Establecemos los inputs en vacios y mostramos una alerta
+        document.querySelector("#md-cantidad").value = ""
+        document.querySelector("#md-subtotal").value = ""
+        alert("Supera el stock")
       }
     })
 
-    document.querySelector(".md-cantidad").addEventListener("input", (e) => {
-      const quantityInput = e.target
-      const row = quantityInput.closest(".row")
-      if (!row.querySelector(".select-productos").value) return;
+    //Evento input de la caja de texto cantidad
+    document.querySelector("#md-cantidad").addEventListener("input", (e) => {
+      const quantity = parseInt(e.target.value)
+      const productSelect = document.querySelector("#md-productos")
+      if (!productSelect.value) return;
 
-      const priceInput = row.querySelector(".md-precio")
-      const subtotalInput = row.querySelector(".md-subtotal")
-
-      const quantity = parseInt(quantityInput.value, 10)
-      const price = parseInt(priceInput.value, 10)
-
-      const productSelect = row.querySelector(".select-productos")
-      const stock = productSelect.options[productSelect.selectedIndex].dataset.stock
-
-      if (quantity > stock) {
-        quantityInput.value = ""
-        subtotalInput.value = ""
-        alert("Supera el stock")
-        return;
-      }
+      const price = parseFloat(document.querySelector("#md-precio").value)
+      const stock = parseInt(productSelect.options[productSelect.selectedIndex].dataset.stock)
 
       if (quantity > 0) {
-        const subtotal = quantity * price
-        subtotalInput.value = subtotal
+        const subtotal = (quantity * price).toFixed(2)
+        document.querySelector("#md-subtotal").value = subtotal
       } else {
-        subtotalInput.value = ""
+        document.querySelector("#md-subtotal").value = ""
+      }
+
+      if (quantity > stock) {
+        document.querySelector("#md-cantidad").value = ""
+        document.querySelector("#md-subtotal").value = ""
+        alert("Supera el stock")
       }
     })
+
+    document.querySelector("#md-agregar-producto").addEventListener("click", addToDetailsTable)
 
     //Funciones automáticas
     loadSales()
