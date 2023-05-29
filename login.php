@@ -24,7 +24,7 @@ if(isset($_SESSION['seguridad']) && $_SESSION['seguridad']['login']) {
   <div class="container d-flex justify-content-center align-items-center min-vh-100"> 
       <div class="row border rounded-5 p-3 bg-white shadow box-area">
         <!-- Contenedor del LOGO -->
-        <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box">
+        <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box bg-dark">
           <div class="featured-image">
             <img id="logo" src="./images/mil_sabores_logo_blanco.png" class="img-fluid" style="width: 250px;">
           </div>
@@ -57,7 +57,7 @@ if(isset($_SESSION['seguridad']) && $_SESSION['seguridad']['login']) {
             </form>
             <!-- Buttons -->
             <div class="input-group mb-3">
-              <button id="login" class="btn btn-lg text-light w-100 fs-6" type="button">Iniciar sesión</button>
+              <button id="login" class="btn bg-primary btn-lg text-light w-100 fs-6" type="button">Iniciar sesión</button>
             </div>
             <div class="input-group mb-3">
               <button class="btn btn-lg btn-light w-100 fs-6" type="button"><img src="./images/google.png" style="width: 20px;" class="me-2"><small>Sign In with Google</small></button>
