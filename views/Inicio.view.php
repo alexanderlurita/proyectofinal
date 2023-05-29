@@ -1,4 +1,4 @@
-<h3>Restaurante Mil Sabores</h3>
+<h3>Bienvenido <?= $_SESSION['seguridad']['nombres'] ?></h3>
 <hr>
 
 <div class="row">
@@ -6,7 +6,7 @@
     <canvas id="grafico-1"></canvas>
   </div>
   <div class="col-md-6">
-    <canvas class="grafico-2"></canvas>
+    <canvas id="grafico-2"></canvas>
   </div>
 </div>
 
@@ -19,8 +19,27 @@
     const grafico1 = document.getElementById('grafico-1');
     const grafico2 = document.getElementById('grafico-2');
 
-    new Chart(grafico1, {
+    const graficoOne = new Chart(grafico1, {
       type: 'bar',
+      data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [{
+          label: '# of Votes',
+          data: [12, 19, 3, 5, 2, 3],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    const graficoTwo = new Chart(grafico2, {
+      type: 'pie',
       data: {
         labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
         datasets: [{

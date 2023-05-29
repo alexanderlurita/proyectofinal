@@ -130,6 +130,14 @@ INSERT INTO personas (apellidos, nombres, telefono, correo, direccion) VALUES
 	('Mendoza Quispe', 'Carlos', '987102030', NULL, NULL),
 	('Ramirez', 'Mireya', NULL, NULL, NULL);
 	
+INSERT INTO personas (apellidos, nombres, telefono, correo, direccion) VALUES
+	('Casanova Lopez', 'Luis David', NULL, NULL, NULL),
+	('Félix', 'Christian', '924304010', NULL, NULL),
+	('Pachas', 'Kiara', '999881122', NULL, NULL),
+	('Medina de la Cruz', 'Carmen', NULL, 'carmenmedina@hotmail.com', NULL),
+	('Guerrero Farfán', 'Jesús', NULL, NULL, 'Condominio Los Sauces');
+	
+	
 INSERT INTO turnos (turno, horainicio, horafin) VALUES
 	('Mañana', '08:00:00', '12:00:00'),
 	('Tarde', '12:00:00', '18:00:00'),
@@ -143,6 +151,9 @@ INSERT INTO empleados (idpersona, cargo, idturno) VALUES
 INSERT INTO usuarios (idempleado, nombreusuario, claveacceso) VALUES
 	(1, 'Cintia', '$2y$10$EESBB7SbmSCq/P9w0m5iO.IHrMJofhI/Suk4SqrSsB4bbMqAVkY2K'),
 	(2, 'Paul', '$2y$10$.H7VAses0eK0kwb7ogG9OuATyST4naJHR3X2XK5dWm0DIuwJaRh8G');
+	
+INSERT INTO usuarios (idempleado, nombreusuario, claveacceso) VALUES
+	(3, 'Alexander', '$2y$10$VCpxnyDPMD//XUMqa3kcPuxKcNwsgUVdaqvYdWUjKKSeCxEqqpB5i');
 	
 INSERT INTO mesas (nombremesa, capacidad) VALUES
 	('Mesa 1', 3),
@@ -258,6 +269,30 @@ BEGIN
 		(@ultima_venta_id, _idproducto, _cantidad, _precioproducto);
 END $$
 
+-- AGREGAR PRODUCTO - VENTA PENDIENTE
+DELIMITER $$
+CREATE PROCEDURE spu_detalle_venta_registrar
+(
+IN _idventa		INT,
+IN _idproducto		INT,
+IN _cantidad		TINYINT,
+IN _precioproducto 	DECIMAL(7,2)
+)
+BEGIN
+	DECLARE _existe_producto INT;
+	
+	SELECT COUNT(*) INTO _existe_producto FROM detalle_venta WHERE idventa = _idventa AND idproducto = _idproducto;
+	
+	IF _existe_producto > 0 THEN
+		UPDATE detalle_venta SET 
+			cantidad = cantidad + _cantidad 
+		WHERE idventa = _idventa AND idproducto = _idproducto;
+	ELSE
+		INSERT INTO detalle_venta(idventa, idproducto, cantidad, precioproducto) VALUES 
+			(_idventa, _idproducto, _cantidad, _precioproducto);
+	END IF;
+END $$
+
 -- DETALLAR VENTA
 DELIMITER $$
 CREATE PROCEDURE spu_ventas_detallar(IN _idventa INT)
@@ -314,5 +349,7 @@ BEGIN
 END $$
 
 
-SELECT * FROM productos
+SELECT * FROM personas;
+SELECT * FROM empleados;
+SELECT * FROM usuarios;
 CALL spu_ventas_detallar(1)

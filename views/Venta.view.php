@@ -40,7 +40,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="" autocomplete="off">
+        <form action="" autocomplete="off" id="formulario-nueva-venta">
           <div class="row text-end">
             <span class="col-form-label fw-semibold">Fecha: <span class="fw-normal"><?php echo date('d/m/Y'); ?></span></span>
           </div>
@@ -217,12 +217,55 @@
   </div>
 </div> <!-- Fin de segundo modal -->
 
+<!-- Tercer modal - Agregar nuevo producto a venta pendiente -->
+<div class="modal fade" id="modal-agregar-producto" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-light">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Agregar producto</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="" autocomplete="off" class="container" id="formulario-agregar-producto">
+          <div class="row mb-1">
+            <label for="ap-productos" class="col-form-label fw-semibold">Producto:</label>
+            <select class="form-select" id="ap-productos">
+              <option value="">Seleccione</option>
+            </select>
+          </div>
+          <div class="row mb-1">
+            <div class="col-md-4">
+              <label for="ap-cantidad" class="col-form-label fw-semibold">Cantidad:</label>
+              <input type="number" class="form-control" id="ap-cantidad">
+            </div>
+            <div class="col-md-4">
+              <label for="ap-precio" class="col-form-label fw-semibold">Precio:</label>
+              <input type="number" class="form-control" id="ap-precio" readonly>
+            </div>
+            <div class="col-md-4">
+              <label for="ap-importe" class="col-form-label fw-semibold">Importe:</label>
+              <input type="number" class="form-control" id="ap-importe" readonly>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button id="ap-agregar-producto" type="button" class="btn btn-primary">Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const table = document.querySelector("#tabla-ventas")
     const tableBody = table.querySelector("tbody")
     const mdNuevaVenta = new bootstrap.Modal(document.querySelector("#modal-nueva-venta"))
     const mdDetallesVenta = new bootstrap.Modal(document.querySelector("#modal-detalles-venta"))
+    const mdAgregarProducto = new bootstrap.Modal(document.querySelector("#modal-agregar-producto"))
+
+    let idventa = 0
 
     function loadSales(){
       const pm = new URLSearchParams()
@@ -396,12 +439,19 @@
         .then(response => response.json())
         .then(data => {
           data.forEach(element => {
-            const option = document.createElement("option")
-            option.textContent = element.nombreproducto
-            option.value = element.idproducto
-            option.setAttribute("data-precio", element.precio)
-            option.setAttribute("data-stock", element.stock)
-            document.querySelector("#md-productos").appendChild(option)
+            const optionMd = document.createElement("option")
+            optionMd.textContent = element.nombreproducto
+            optionMd.value = element.idproducto
+            optionMd.setAttribute("data-precio", element.precio)
+            optionMd.setAttribute("data-stock", element.stock)
+            document.querySelector("#md-productos").appendChild(optionMd)
+
+            const optionAp = document.createElement("option")
+            optionAp.textContent = element.nombreproducto
+            optionAp.value = element.idproducto
+            optionAp.setAttribute("data-precio", element.precio)
+            optionAp.setAttribute("data-stock", element.stock)
+            document.querySelector("#ap-productos").appendChild(optionAp)
           });
         })
     }
@@ -543,7 +593,43 @@
                     })
                 })
                 mdNuevaVenta.toggle()
+                document.querySelector("#formulario-nueva-venta").reset()
+                document.querySelector("#md-tabla-detalles tbody").innerHTML = ''
                 loadSales()
+              } else {
+                alert(data.message)
+              }
+            })
+        }
+      }
+    }
+
+    function addDetail(idventa) {
+      if (
+        !document.querySelector("#ap-productos").value ||
+        !document.querySelector("#ap-cantidad").value ||
+        !document.querySelector("#ap-precio").value ||
+        !document.querySelector("#ap-importe").value
+      ) {
+        alert("Seleccione un producto y la cantidad")
+      } else {
+        if (confirm("¿Desea agregar un nuevo pedido?")) {
+          const pm = new URLSearchParams()
+          pm.append("operacion", "registrar")
+          pm.append("idventa", idventa)
+          pm.append("idproducto", document.querySelector("#ap-productos").value)
+          pm.append("cantidad", document.querySelector("#ap-cantidad").value)
+          pm.append("precioproducto", document.querySelector("#ap-precio").value)
+          
+          fetch("./controllers/Detalle_Venta.controller.php", {
+            method: 'POST',
+            body: pm
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data) {
+                document.querySelector("#formulario-agregar-producto").reset()
+                mdAgregarProducto.toggle()
               } else {
                 alert(data.message)
               }
@@ -558,6 +644,21 @@
         const detallesButton = e.target.closest('.detallar');
         const idventa = detallesButton ? detallesButton.dataset.idventa : e.target.parentElement.dataset.idventa
         loadDetails(idventa)
+      } 
+
+      if (e.target.classList.contains('agregar-producto') || e.target.parentElement.classList.contains('agregar-producto')) {
+        const trElement = e.target.closest('tr')
+        const tds = trElement.querySelectorAll('td')
+        const tdAnterior = tds[tds.length - 2]
+        const contenidoTdAnterior = tdAnterior.textContent.trim()
+
+        if (contenidoTdAnterior === "Pendiente") {
+          const agregarButton = e.target.closest('.agregar-producto');
+          idventa = agregarButton ? agregarButton.dataset.idventa : e.target.parentElement.dataset.idventa
+          mdAgregarProducto.toggle()
+        } else {
+          alert("La venta ya está finalizada")
+        }
       }
     })
 
@@ -615,6 +716,57 @@
     })
 
     document.querySelector("#md-agregar-producto").addEventListener("click", addToDetailsTable)
+
+    document.querySelector("#ap-productos").addEventListener("change", (e) => {
+      const option = e.target.options[e.target.selectedIndex]
+
+      //Accedemos a los dataset precio y stock de la opción
+      const price = parseFloat(option.dataset.precio).toFixed(2)
+      const stock = parseInt(option.dataset.stock)
+
+      document.querySelector("#ap-precio").value = price
+
+      if (document.querySelector("#ap-cantidad").value > 0) {
+        //Multiplicamos el valor del input por el precio de producto
+        const subtotal = (parseInt(document.querySelector("#ap-cantidad").value) * price).toFixed(2)
+
+        //Establecemos el valor del subtotal(importe) en el input con ID ap-importe
+        document.querySelector("#ap-importe").value = subtotal
+      }
+
+      if (document.querySelector("#ap-cantidad").value > stock) {
+        //Establecemos los inputs en vacios y mostramos una alerta
+        document.querySelector("#ap-cantidad").value = ""
+        document.querySelector("#ap-importe").value = ""
+        alert("Supera el stock")
+      }
+    })
+
+    document.querySelector("#ap-cantidad").addEventListener("input", (e) => {
+      const quantity = parseInt(e.target.value)
+      const productSelect = document.querySelector("#ap-productos")
+      if (!productSelect.value) return;
+
+      const price = parseFloat(document.querySelector("#ap-precio").value)
+      const stock = parseInt(productSelect.options[productSelect.selectedIndex].dataset.stock)
+
+      if (quantity > 0) {
+        const subtotal = (quantity * price).toFixed(2)
+        document.querySelector("#ap-importe").value = subtotal
+      } else {
+        document.querySelector("#ap-importe").value = ""
+      }
+
+      if (quantity > stock) {
+        document.querySelector("#ap-cantidad").value = ""
+        document.querySelector("#ap-importe").value = ""
+        alert("Supera el stock")
+      }
+    })    
+
+    document.querySelector("#ap-agregar-producto").addEventListener("click", () => {
+      addDetail(idventa)
+    })
 
     document.querySelector("#md-tabla-detalles tbody").addEventListener("click", (e) => {
       if (
