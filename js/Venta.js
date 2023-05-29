@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const mdNuevaVenta = new bootstrap.Modal(document.querySelector("#modal-nueva-venta"))
   const mdDetallesVenta = new bootstrap.Modal(document.querySelector("#modal-detalles-venta"))
   const mdAgregarProducto = new bootstrap.Modal(document.querySelector("#modal-agregar-producto"))
+  const mdCambiarEstado = new bootstrap.Modal(document.querySelector("#modal-cambiar-estado"))
 
   //Variable global que se usará al agregar un producto SOLO a una venta pendiente
   let idventa = 0
@@ -35,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <td>${element.idventa}</td>
               <td>${element.nombremesa}</td>
               <td>${element.cliente}</td>
-              <td>${element.fechahoraventa}</td>
+              <td>${element.fechahoraorden}</td>
               <td>${estado}</td>
               <td>
                 <a class='detallar btn btn-primary btn-sm' data-idventa='${element.idventa}'>
@@ -446,14 +447,20 @@ document.addEventListener("DOMContentLoaded", () => {
   // Evento click en las columnas operaciones de la tabla principal
   tableBody.addEventListener("click", (e) => {
     //botón detallar
-    if (e.target.classList.contains('detallar') || e.target.parentElement.classList.contains('detallar')) {
+    if (
+      e.target.classList.contains('detallar') || 
+      e.target.parentElement.classList.contains('detallar')
+    ) {
       const detallesButton = e.target.closest('.detallar');
       const idventa = detallesButton ? detallesButton.dataset.idventa : e.target.parentElement.dataset.idventa
       loadDetails(idventa)
     } 
 
     //botón agregar nuevo producto
-    if (e.target.classList.contains('agregar-producto') || e.target.parentElement.classList.contains('agregar-producto')) {
+    if (
+      e.target.classList.contains('agregar-producto') || 
+      e.target.parentElement.classList.contains('agregar-producto')
+    ) {
       const trElement = e.target.closest('tr')
       const tds = trElement.querySelectorAll('td')
       const tdAnterior = tds[tds.length - 2]
@@ -468,6 +475,14 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("La venta ya está finalizada")
       }
     }
+
+    if (
+      e.target.classList.contains('cambiar-estado') ||
+      e.target.parentElement.classList.contains('cambiar-estado')
+    ) {
+      mdCambiarEstado.toggle()
+    }
+
   })
 
   //Evento change de la lista productos
@@ -590,7 +605,6 @@ document.addEventListener("DOMContentLoaded", () => {
   })
 
   //mdNuevaVenta.toggle()
-
   //Evento click en la tabla md-detalles, se encuentra en el primer modal (NUEVA VENTA)
   document.querySelector("#md-tabla-detalles tbody").addEventListener("click", (e) => {
     //Primer botón
@@ -614,6 +628,20 @@ document.addEventListener("DOMContentLoaded", () => {
       if (parseInt(row.cells[2].textContent) <= 0) {
         row.remove()
       }
+      calculateAmounts()
+    }
+
+    if (
+      e.target.classList.contains('md-aumentar-producto') ||
+      e.target.parentElement.classList.contains('md-aumentar-producto')
+    ) {
+      const row = e.target.closest('tr')
+      row.cells[2].textContent = parseInt(row.cells[2].textContent) + 1
+      row.cells[4].textContent = (parseInt(row.cells[2].textContent) * parseFloat(row.cells[3].textContent)).toFixed(2)
+
+      let options = document.querySelector("#md-productos").options
+      console.log(options)
+
       calculateAmounts()
     }
   })
