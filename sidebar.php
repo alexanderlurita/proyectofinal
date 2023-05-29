@@ -9,9 +9,6 @@
     <a href="dashboard.php?vista=producto" class="text-decoration-none px-3 py-2 d-block"><i class="fa-solid fa-burger"></i> Productos</a>
   </li>
   <li class="">
-    <a href="#" class="text-decoration-none px-3 py-2 d-block"><i class="fa-solid fa-chart-column"></i> Reportes</a>
-  </li>
-  <li class="">
     <a href="#" class="text-decoration-none px-3 py-2 d-block"><i class="fa-solid fa-utensils"></i> Mesas</a>
   </li>
 

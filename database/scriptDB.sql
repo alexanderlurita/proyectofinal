@@ -349,7 +349,9 @@ BEGIN
 END $$
 
 
-SELECT * FROM personas;
+/*SELECT * FROM personas;
 SELECT * FROM empleados;
 SELECT * FROM usuarios;
-CALL spu_ventas_detallar(1)
+CALL spu_ventas_detallar(1)*/
+SELECT * FROM ventas;
+SELECT * FROM pagos;
