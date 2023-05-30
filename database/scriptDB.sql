@@ -61,10 +61,10 @@ CREATE TABLE mesas
 	idmesa			TINYINT AUTO_INCREMENT PRIMARY KEY,
 	nombremesa		VARCHAR(40)	NOT NULL,
 	capacidad		TINYINT		NOT NULL,
-	estado			CHAR(1)		NOT NULL DEFAULT 'D', -- D(Disponible), O(Ocupada), R(Reservada), M(Mantenimiento)
+	estado			CHAR(1)		NOT NULL DEFAULT 'D', -- D(Disponible), O(Ocupada), R(Reservada)
 	CONSTRAINT uk_nombremesa_mes UNIQUE (nombremesa),
 	CONSTRAINT ck_capacidad_mes CHECK (capacidad > 0),
-	CONSTRAINT ck_estado_mes CHECK (estado IN ('D', 'O', 'R', 'M'))
+	CONSTRAINT ck_estado_mes CHECK (estado IN ('D', 'O', 'R'))
 ) ENGINE = INNODB;
 
 CREATE TABLE productos
@@ -152,6 +152,13 @@ INSERT INTO mesas (nombremesa, capacidad) VALUES
 	('Mesa 3', 3),
 	('Mesa 4', 6),
 	('Mesa 5', 2);
+	
+INSERT INTO mesas (nombremesa, capacidad, estado) VALUES 
+	('Mesa 6', '5', 'O'),
+	('Mesa 7', '2', 'D'),
+	('Mesa 8', '2', 'R'),
+	('Mesa 9', '3', 'D'),
+	('Mesa 10', '6', 'D');
 	
 INSERT INTO productos (tipoproducto, nombreproducto, descripcion, precio, stock) VALUES
 	('Entrada', 'Tequeños de Lomo Saltado', '8 unidades de tequeños rellenos de lomo saltado criollo con guacamole', 20, NULL),
@@ -296,11 +303,10 @@ END $$
 -- MESAS
 -- LISTAR
 DELIMITER $$
-CREATE PROCEDURE spu_mesas_listar(IN _estado CHAR(1)) 
+CREATE PROCEDURE spu_mesas_listar() 
 BEGIN
 	SELECT *
-		FROM mesas
-		WHERE estado = _estado;
+		FROM mesas;
 END $$
 
 -- PRODUCTOS
@@ -386,4 +392,13 @@ BEGIN
 	SELECT COUNT(*) AS total_clientes
 		FROM personas
 		WHERE idpersona NOT IN (SELECT idempleado FROM contratos);
+END $$
+
+
+-- PROCEDIMIENTO PARA BUSCAR UNA MESA EN LAS VENTAS DE LAS ÚLTIMAS 24 HORAS
+DELIMITER $$
+CREATE PROCEDURE spu_ventas_buscarmesa(IN _idmesa)
+BEGIN
+	SELECT * 
+		FROM ventas WHERE idmesa = 2;
 END $$

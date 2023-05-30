@@ -87,9 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
           
           const card = `
             <div class="col">
-              <div class="card ${bgStatus}" data-idmesa='${table.idmesa}'>
+              <div class="card ${bgStatus}" data-idmesa='${table.idmesa}' data-status=${table.estado}>
                 <div class="card-body">
-                  <div class='row justify-content-between'>
+                  <div class='row d-flex justify-content-between'>
                     <div class='col'>
                       <h4 class="card-title">${table.nombremesa}</h4>
                     </div>
@@ -99,13 +99,13 @@ document.addEventListener("DOMContentLoaded", () => {
                   </div>
                   <p class="card-text">Capacidad: ${table.capacidad}</p>
                   <div class='d-flex justify-content-end'>
-                    <button class='btn btn-primary ms-1'>
+                    <button class='btn btn-secondary ms-1 detallar'>
                       <i class="fa-solid fa-list"></i>
                     </button>
-                    <button class='btn btn-primary ms-1'>
+                    <button class='btn btn-primary ms-1 agregar-producto'>
                       <i class="fa-solid fa-plus"></i>
                     </button>
-                    <button class='btn btn-success ms-1'>
+                    <button class='btn btn-success ms-1 procesar-pago'>
                       <i class="fa-solid fa-money-check-dollar"></i>
                     </button>
                   </div>
@@ -117,6 +117,20 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
   }
+
+  tablesContainer.addEventListener("click", (e) => {
+    const card = e.target.closest(".card");
+    if (card){
+      const button = e.target.closest('.btn');
+      if (!button) {
+        if (card.dataset.status === "D") {
+          mdNuevaVenta.toggle();
+        } else {
+          alert("Mesa no disponible")
+        }
+      }
+    }
+  })
 
   //Función que cargará los detalles de una venta en el modal detalles-venta
   function loadDetails(idventa) {
