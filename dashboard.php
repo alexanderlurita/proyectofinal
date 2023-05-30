@@ -51,7 +51,7 @@ switch ($vista) {
     </div> 
     <div class="content">
       <?php include 'navbar.php'; ?>
-      <div class="dashboard-content px-3 pt-4" id="dynamic_content">
+      <div class="dashboard-content px-4 pt-4" id="dynamic_content">
         <?php include $contenido; ?>
       </div> <!-- Fin Dynamic Content -->
     </div> <!-- Fin content -->

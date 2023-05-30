@@ -1,6 +1,6 @@
 /*
 SQLyog Ultimate v12.5.1 (64 bit)
-MySQL - 10.4.27-MariaDB : Database - restaurantedb
+MySQL - 10.4.24-MariaDB : Database - restaurantedb
 *********************************************************************
 */
 
@@ -12,7 +12,7 @@ MySQL - 10.4.27-MariaDB : Database - restaurantedb
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`restaurantedb` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`restaurantedb` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 
 USE `restaurantedb`;
 
@@ -33,7 +33,7 @@ CREATE TABLE `contratos` (
   KEY `fk_idturno_cont` (`idturno`),
   CONSTRAINT `fk_idempleado_cont` FOREIGN KEY (`idempleado`) REFERENCES `personas` (`idpersona`),
   CONSTRAINT `fk_idturno_cont` FOREIGN KEY (`idturno`) REFERENCES `turnos` (`idturno`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `contratos` */
 
@@ -59,7 +59,7 @@ CREATE TABLE `detalle_venta` (
   CONSTRAINT `fk_idventa_det` FOREIGN KEY (`idventa`) REFERENCES `ventas` (`idventa`),
   CONSTRAINT `ck_cantidad_det` CHECK (`cantidad` > 0),
   CONSTRAINT `ck_precioproducto_det` CHECK (`precioproducto` >= 0)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `detalle_venta` */
 
@@ -68,7 +68,15 @@ insert  into `detalle_venta`(`iddetalleventa`,`idventa`,`idproducto`,`cantidad`,
 (2,1,8,2,40.00),
 (3,1,9,2,5.00),
 (4,2,5,2,20.00),
-(5,2,6,2,5.00);
+(5,2,6,2,5.00),
+(6,6,14,1,12.00),
+(7,6,18,2,8.00),
+(8,6,13,1,35.00),
+(9,6,6,3,5.00),
+(10,6,15,2,30.00),
+(11,7,14,2,12.00),
+(12,7,9,2,5.00),
+(13,7,11,2,38.00);
 
 /*Table structure for table `mesas` */
 
@@ -83,16 +91,24 @@ CREATE TABLE `mesas` (
   UNIQUE KEY `uk_nombremesa_mes` (`nombremesa`),
   CONSTRAINT `ck_capacidad_mes` CHECK (`capacidad` > 0),
   CONSTRAINT `ck_estado_mes` CHECK (`estado` in ('D','O','R','M'))
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `mesas` */
 
 insert  into `mesas`(`idmesa`,`nombremesa`,`capacidad`,`estado`) values 
-(1,'Mesa 1',3,'D'),
+(1,'Mesa 1',3,'O'),
 (2,'Mesa 2',4,'D'),
-(3,'Mesa 3',3,'D'),
+(3,'Mesa 3',3,'O'),
 (4,'Mesa 4',6,'D'),
-(5,'Mesa 5',2,'D');
+(5,'Mesa 5',2,'D'),
+(6,'Mesa 6',5,'D'),
+(7,'Mesa 7',2,'D'),
+(8,'Mesa 8',2,'D'),
+(9,'Mesa 9',3,'D'),
+(10,'Mesa 10',6,'D'),
+(11,'Mesa 11',6,'D'),
+(12,'Mesa 12',4,'D'),
+(13,'Mesa 13',2,'D');
 
 /*Table structure for table `personas` */
 
@@ -109,7 +125,7 @@ CREATE TABLE `personas` (
   PRIMARY KEY (`idpersona`),
   UNIQUE KEY `uk_dni_per` (`dni`),
   CONSTRAINT `ck_dni_per` CHECK (`dni` regexp '^[0-9]{8}$')
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `personas` */
 
@@ -126,7 +142,32 @@ insert  into `personas`(`idpersona`,`apellidos`,`nombres`,`dni`,`telefono`,`corr
 (10,'Félix Ramos','Christian','74115373','924304010',NULL,NULL),
 (11,'Pachas','Kiara','69850766','999881122',NULL,NULL),
 (12,'Medina de la Cruz','Carmen','14093899',NULL,'carmenmedina@hotmail.com',NULL),
-(13,'Guerrero Farfán','Jesús','85043143',NULL,NULL,'Condominio Los Sauces');
+(13,'Guerrero Farfán','Jesús','85043143',NULL,NULL,'Condominio Los Sauces'),
+(14,'García Hernández','María','53297846','912345678','mgarcia@gmail.com','Calle Mayor, 123'),
+(15,'López Rodríguez','Juan','70984125','667890123','jlopez@hotmail.com','Avenida Libertad, 456'),
+(16,'Martínez González','Laura','42169783','644567890','lauramartinez@gmail.com','Calle Sol, 789'),
+(17,'Rodríguez Fernández','Carlos','36589247','912345678','crodriguez@gmail.com','Calle Luna, 234'),
+(18,'Hernández Sánchez','Ana','57698342','667890123','ahernandez@hotmail.com','Avenida Principal, 567'),
+(19,'Gómez Ramírez','Pedro','64821735','644567890','pgomez@gmail.com','Calle Central, 890'),
+(20,'López García','Sofía','47382916','912345678','slopez@gmail.com','Calle Primavera, 345'),
+(21,'Sánchez Torres','Marta','39214758','667890123','msanchez@hotmail.com','Avenida del Parque, 678'),
+(22,'Pérez Martínez','Luis','62873941','644567890','lperez@gmail.com','Calle Jardín, 901'),
+(23,'Ramírez Jiménez','Isabel','41273958','912345678','iramirez@gmail.com','Calle Verano, 234'),
+(24,'González Castro','Manuel','59873214','667890123','mgonzalez@hotmail.com','Avenida Central, 567'),
+(25,'Hernández García','Paula','73628194','644567890','phernandez@gmail.com','Calle Otoño, 890'),
+(26,'Martínez Rodríguez','Daniel','31947285','912345678','dmartinez@gmail.com','Calle Invierno, 345'),
+(27,'López Sánchez','Sara','52793841','667890123','slopez@hotmail.com','Avenida Primavera, 678'),
+(28,'Sánchez Ramírez','Alejandro','46918327','644567890','asanchez@gmail.com','Calle Sol, 901'),
+(29,'Gómez Torres','Laura','68173942','912345678','lgomez@hotmail.com','Calle Luna, 234'),
+(30,'Rodríguez Pérez','Marcos','39472819','667890123','mrodriguez@gmail.com','Avenida Libertad, 567'),
+(31,'Pérez López','Carolina','54873129','644567890','cperez@gmail.com','Calle Mayor, 890'),
+(32,'Ramírez García','Javier','61384927','912345678','jramirez@hotmail.com','Calle Central, 123'),
+(33,'Fernández Martínez','Andrea','27846193','667890123','afernandez@gmail.com','Avenida Principal, 456'),
+(34,'García Sánchez','Lucía','39672841','644567890','lgarcia@hotmail.com','Calle Sol, 789'),
+(35,'Torres Ramírez','Juan','52473918','912345678','jtorres@gmail.com','Calle Luna, 234'),
+(36,'Pérez Sánchez','María','74291835','667890123','mperez@hotmail.com','Avenida Libertad, 567'),
+(37,'López Martínez','Pablo','61394827','644567890','plopez@gmail.com','Calle Mayor, 890'),
+(38,'Rodríguez Torres','Laura','31972846','912345678','lrodriguez@gmail.com','Calle Central, 123');
 
 /*Table structure for table `productos` */
 
@@ -143,7 +184,7 @@ CREATE TABLE `productos` (
   UNIQUE KEY `uk_producto_pla` (`tipoproducto`,`nombreproducto`),
   CONSTRAINT `ck_precio_pla` CHECK (`precio` > 0),
   CONSTRAINT `ck_stock_pla` CHECK (`stock` >= 0)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `productos` */
 
@@ -156,7 +197,17 @@ insert  into `productos`(`idproducto`,`tipoproducto`,`nombreproducto`,`descripci
 (6,'Bebida','Inca Kola 600ml','Vaso de Inca Kola + hielos',5.00,16),
 (7,'Entrada','Anticucho de corazón especial','Dos palitos de trozos tiernos de corazón de res, acompañados con choclo José Antonio, papa dorada y salsa criolla',25.00,NULL),
 (8,'Plato de fondo','Cau Cau','Receta en base a trozos de mondongo y papa, acompañada con arroz blanco',40.00,NULL),
-(9,'Bebida','Chicha morada','Vaso grande de chicha morada + hielos',5.00,NULL);
+(9,'Bebida','Chicha morada','Vaso grande de chicha morada + hielos',5.00,NULL),
+(10,'Postre','Tarta de Manzana','Deliciosa tarta de manzana con crujiente de canela y helado de vainilla',15.00,30),
+(11,'Plato de fondo','Lomo de Res a la Parrilla','Tierno lomo de res a la parrilla con papas fritas y ensalada mixta',38.00,NULL),
+(12,'Bebida','Mojito Clásico','Refrescante cóctel de mojito con lima, menta fresca y ron blanco',10.00,NULL),
+(13,'Entrada','Ceviche Mixto','Ceviche de pescado y mariscos con limón, cebolla morada, ají y camote',35.00,NULL),
+(14,'Postre','Flan de Caramelo','Suave y cremoso flan de caramelo con salsa de caramelo y trocitos de almendra',12.00,25),
+(15,'Plato de fondo','Pollo a la Brasa','Jugoso pollo a la brasa acompañado de papas doradas y salsa huancaina',30.00,NULL),
+(16,'Bebida','Margarita de Fresa','Refrescante margarita de fresa con tequila, jugo de limón y azúcar',12.00,NULL),
+(17,'Entrada','Empanadas Argentinas','Deliciosas empanadas argentinas rellenas de carne, pollo o verduras',18.00,NULL),
+(18,'Postre','Helado de Chocolate','Delicioso helado de chocolate con trocitos de chocolate negro y salsa de chocolate caliente',8.00,21),
+(19,'Plato de fondo','Pasta Alfredo con Camarones','Pasta al dente con salsa Alfredo y camarones salteados en mantequilla y ajo',28.00,NULL);
 
 /*Table structure for table `turnos` */
 
@@ -169,7 +220,7 @@ CREATE TABLE `turnos` (
   `horafin` time NOT NULL,
   PRIMARY KEY (`idturno`),
   UNIQUE KEY `uk_turno_tur` (`turno`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `turnos` */
 
@@ -196,7 +247,7 @@ CREATE TABLE `usuarios` (
   UNIQUE KEY `uk_nombreusuario_usu` (`nombreusuario`),
   CONSTRAINT `fk_idempleado_usu` FOREIGN KEY (`idempleado`) REFERENCES `contratos` (`idcontrato`),
   CONSTRAINT `ck_nivelacceso_usu` CHECK (`nivelacceso` in ('A','E','S'))
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `usuarios` */
 
@@ -232,13 +283,15 @@ CREATE TABLE `ventas` (
   CONSTRAINT `ck_metodopago_ven` CHECK (`metodopago` in ('E','T','Y','P')),
   CONSTRAINT `ck_montopagado_ven` CHECK (`montopagado` > 0),
   CONSTRAINT `ck_estado_ven` CHECK (`estado` in ('PA','PE','CA'))
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `ventas` */
 
 insert  into `ventas`(`idventa`,`idmesa`,`idcliente`,`idempleado`,`fechahoraorden`,`tipocomprobante`,`numcomprobante`,`metodopago`,`fechahorapago`,`montopagado`,`estado`) values 
 (1,2,7,3,'2023-05-29 19:40:50','BE','BLE-000001','Y','2023-05-29 20:10:50',130.00,'PA'),
-(2,3,NULL,3,'2023-05-29 19:40:50','BS','BLS-000002','E','2023-05-29 20:10:50',50.00,'PA');
+(2,3,NULL,3,'2023-05-29 19:40:50','BS','BLS-000002','E','2023-05-29 20:10:50',50.00,'PA'),
+(6,1,NULL,3,'2023-05-30 15:21:11',NULL,NULL,NULL,NULL,NULL,'PE'),
+(7,3,NULL,3,'2023-05-30 15:51:25',NULL,NULL,NULL,NULL,NULL,'PE');
 
 /* Procedure structure for procedure `ContarClientes` */
 
@@ -371,17 +424,33 @@ BEGIN
 END */$$
 DELIMITER ;
 
+/* Procedure structure for procedure `spu_mesas_cambiarestado` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `spu_mesas_cambiarestado` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_mesas_cambiarestado`(
+in _idmesa	 	tinyint,
+in _estado 		char(1)
+)
+begin
+	update mesas set
+		estado = _estado
+	where idmesa = _idmesa;
+end */$$
+DELIMITER ;
+
 /* Procedure structure for procedure `spu_mesas_listar` */
 
 /*!50003 DROP PROCEDURE IF EXISTS  `spu_mesas_listar` */;
 
 DELIMITER $$
 
-/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_mesas_listar`(IN _estado CHAR(1))
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_mesas_listar`()
 BEGIN
 	SELECT *
-		FROM mesas
-		WHERE estado = _estado;
+		FROM mesas;
 END */$$
 DELIMITER ;
 
@@ -461,7 +530,10 @@ DELIMITER ;
 
 DELIMITER $$
 
-/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_ventas_detallar`(IN _idventa INT)
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_ventas_detallar`(
+IN _idventa INT,
+in _idmesa 	tinyint
+)
 BEGIN
 	SELECT 	DET.iddetalleventa, 
 		PRO.nombreproducto, 
@@ -471,7 +543,7 @@ BEGIN
 		FROM detalle_venta DET
 		INNER JOIN ventas VEN ON VEN.idventa = DET.idventa
 		INNER JOIN productos PRO ON PRO.idproducto = DET.idproducto
-		WHERE DET.idventa = _idventa;
+		WHERE DET.idventa = _idventa and VEN.idmesa = _idmesa;
 END */$$
 DELIMITER ;
 
@@ -496,6 +568,21 @@ BEGIN
 END */$$
 DELIMITER ;
 
+/* Procedure structure for procedure `spu_ventas_obtenerIdVentaPorMesa` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `spu_ventas_obtenerIdVentaPorMesa` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_ventas_obtenerIdVentaPorMesa`(in _idmesa tinyint)
+begin
+	select ventas.`idventa` 
+		from ventas
+		inner join mesas on mesas.`idmesa` = ventas.`idmesa`
+		where mesas.`idmesa` = _idmesa and ventas.`estado` = 'PE';
+end */$$
+DELIMITER ;
+
 /* Procedure structure for procedure `spu_ventas_registrar` */
 
 /*!50003 DROP PROCEDURE IF EXISTS  `spu_ventas_registrar` */;
@@ -504,13 +591,11 @@ DELIMITER $$
 
 /*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_ventas_registrar`(
 IN _idmesa		TINYINT,
-IN _idcliente		INT,
 IN _idempleado		INT
 )
 BEGIN
-	IF _idcliente = 0 THEN SET _idcliente = NULL; END IF;
-	INSERT INTO ventas(idmesa, idcliente, idempleado) VALUES
-		(_idmesa, _idcliente, _idempleado);
+	INSERT INTO ventas(idmesa, idempleado) VALUES
+		(_idmesa, _idempleado);
 END */$$
 DELIMITER ;
 

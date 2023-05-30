@@ -33,7 +33,7 @@
 </style>
 
 <div class="row mb-3 row-cols-1 row-cols-md-4 g-5">
-  <div class="col">
+  <div class="col counter">
     <div class="card shadow-md rounded-3">
       <div class="card-body">
         <div class="row align-items-center">
@@ -48,7 +48,7 @@
       </div>
     </div>
   </div>
-  <div class="col">
+  <div class="col counter">
     <div class="card shadow-md rounded-3">
       <div class="card-body">
         <div class="row align-items-center">
@@ -63,7 +63,7 @@
       </div>
     </div>
   </div>
-  <div class="col">
+  <div class="col counter">
     <div class="card shadow-md rounded-3">
       <div class="card-body">
         <div class="row align-items-center">
@@ -78,7 +78,7 @@
       </div>
     </div>
   </div>
-  <div class="col">
+  <div class="col counter">
     <div class="card shadow-md rounded-3">
       <div class="card-body">
         <div class="row align-items-center">
@@ -105,7 +105,6 @@
     </div>
   </div>
 </div>
-
 
 <!-- ChartJS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

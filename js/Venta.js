@@ -80,8 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector("#md-mesa").value = card.querySelector("h4").textContent;
 
         mdNuevaVenta.toggle();
-      } else {
-        alert("Mesa no disponible")
       }
     }
 
@@ -91,8 +89,15 @@ document.addEventListener("DOMContentLoaded", () => {
     ) {
       if (card.dataset.status === 'O') {
         loadDetails(card.dataset.idmesa);
-      } else {
-        alert("La mesa no está siendo ocupada");
+      }
+    }
+
+    if (
+      e.target.classList.contains("agregar-producto") ||
+      e.target.parentElement.classList.contains("agregar-producto")
+    ) {
+      if (card.dataset.status === 'O') {
+        mdAgregarProducto.toggle();
       }
     }
   })
