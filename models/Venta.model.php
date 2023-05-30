@@ -78,6 +78,26 @@ class Venta extends Conexion{
       die($e->getMessage());
     }
   }
+
+  public function obtenerVentasTipo() {
+    try {
+      $consulta = $this->conexion->prepare("CALL ObtenerVentasPorTipo()");
+      $consulta->execute();
+      return $consulta->fetchAll(PDO::FETCH_ASSOC);
+    } catch(Exception $e) {
+      die($e->getMessage());
+    }
+  }
+
+  public function obtenerVentasEmpleado() {
+    try {
+      $consulta = $this->conexion->prepare("CALL ObtenerVentasPorEmpleado()");
+      $consulta->execute();
+      return $consulta->fetchAll(PDO::FETCH_ASSOC);
+    } catch(Exception $e) {
+      die($e->getMessage());
+    }
+  }
   
 }
 

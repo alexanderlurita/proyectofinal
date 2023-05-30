@@ -189,8 +189,6 @@ BEGIN
 		WHERE usuarios.nombreusuario = _nombreusuario AND usuarios.estado = '1';
 END $$
 
-CALL spu_usuarios_login('alexander');
-
 -- VENTAS
 -- LISTAR VENTAS
 DELIMITER $$
@@ -336,9 +334,56 @@ BEGIN
 END $$
 
 -- PROCEDIMIENTOS PARA GRÁFICOS
+-- GRÁFICO 1
 DELIMITER $$
-CREATE PROCEDURE ContarVentasUltimos7Dias()
+CREATE PROCEDURE ObtenerVentasPorTipo()
 BEGIN
-	SELECT COUNT(*) 'amount' 
-		FROM ventas;
+	SELECT p.tipoproducto, SUM(dv.cantidad) AS total_cantidad
+		FROM ventas v
+		INNER JOIN detalle_venta dv ON dv.idventa = v.idventa
+		INNER JOIN productos p ON p.idproducto = dv.idproducto
+		WHERE DATE(v.fechahoraorden) BETWEEN CURDATE() - INTERVAL 6 DAY AND CURDATE()
+		GROUP BY p.tipoproducto;
+END $$
+
+-- GRÁFICO 2
+DELIMITER $$
+CREATE PROCEDURE ObtenerVentasPorEmpleado()
+BEGIN
+    SELECT CONCAT(personas.`apellidos`, ' ', personas.`nombres`) AS empleado, COUNT(*) AS total_ventas
+	FROM ventas
+	INNER JOIN contratos ON contratos.`idcontrato` = ventas.`idempleado` 
+	INNER JOIN personas ON personas.`idpersona` = contratos.`idempleado`
+	WHERE ventas.`estado` = 'PA' AND ventas.fechahoraorden >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+	GROUP BY empleado;
+END $$
+
+-- CONTADORES PARA EL INICIO
+DELIMITER $$
+CREATE PROCEDURE ObtenerTotalOrdenes()
+BEGIN
+    SELECT COUNT(*) AS total_ordenes FROM ventas;
+END $$
+
+DELIMITER $$
+CREATE PROCEDURE ObtenerTotalVentasPagadas()
+BEGIN
+    SELECT COUNT(*) AS total_ventas 
+	FROM ventas
+	WHERE estado = "PA";
+END $$
+
+DELIMITER $$
+CREATE PROCEDURE ContarProductosConsumidos()
+BEGIN
+    SELECT SUM(cantidad) AS total_productos
+	FROM detalle_venta;
+END $$
+
+DELIMITER $$
+CREATE PROCEDURE ContarClientes()
+BEGIN
+	SELECT COUNT(*) AS total_clientes
+		FROM personas
+		WHERE idpersona NOT IN (SELECT idempleado FROM contratos);
 END $$

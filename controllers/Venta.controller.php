@@ -41,6 +41,16 @@ if (isset($_POST['operacion'])) {
     echo json_encode($datos);
   }
 
+  if ($_POST['operacion'] == 'obtenerVentasTipo') {
+    $datos = $venta->obtenerVentasTipo();
+    echo json_encode($datos);
+  }
+  
+  if ($_POST['operacion'] == 'obtenerVentasEmpleado') {
+    $datos = $venta->obtenerVentasEmpleado();
+    echo json_encode($datos);
+  }
+
 }
 
 ?>
