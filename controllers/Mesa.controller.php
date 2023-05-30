@@ -7,7 +7,7 @@ if (isset($_POST['operacion'])) {
   $mesa = new Mesa();
 
   if ($_POST['operacion'] == 'listar') {
-    $datos = $mesa->listar($_POST['estado']);
+    $datos = $mesa->listar();
     echo json_encode($datos);
   }
 

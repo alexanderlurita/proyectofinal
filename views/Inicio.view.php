@@ -32,13 +32,13 @@
   }
 </style>
 
-<div class="row mb-3">
-  <div class="col-md-3 mb-2">
+<div class="row mb-3 row-cols-1 row-cols-md-4 g-5">
+  <div class="col">
     <div class="card shadow-md rounded-3">
       <div class="card-body">
         <div class="row align-items-center">
           <div class="col-md-8">
-            <h5>Ordenes</h5>
+            <h5>Ordenes realizadas</h5>
             <h3 id="contador-ordenes">0</h3> 
           </div>
           <div class="col-md-4 justify-content-start">
@@ -48,12 +48,12 @@
       </div>
     </div>
   </div>
-  <div class="col-md-3 mb-2">
+  <div class="col">
     <div class="card shadow-md rounded-3">
       <div class="card-body">
         <div class="row align-items-center">
           <div class="col-md-8 justify-content-start">
-            <h5>Ventas</h5>
+            <h5>Ventas totales</h5>
             <h3 id="contador-ventas">0</h3>
           </div>
           <div class="col-md-4">
@@ -63,12 +63,12 @@
       </div>
     </div>
   </div>
-  <div class="col-md-3 mb-2">
+  <div class="col">
     <div class="card shadow-md rounded-3">
       <div class="card-body">
         <div class="row align-items-center">
           <div class="col-md-8 justify-content-start">
-            <h5>Productos</h5>
+            <h5>Productos vendidos</h5>
             <h3 id="contador-productos">0</h3>
           </div>
           <div class="col-md-4">
@@ -78,12 +78,12 @@
       </div>
     </div>
   </div>
-  <div class="col-md-3 mb-2">
+  <div class="col">
     <div class="card shadow-md rounded-3">
       <div class="card-body">
         <div class="row align-items-center">
           <div class="col-md-8 justify-content-start">
-            <h5>Clientes</h5>
+            <h5>Clientes totales</h5>
             <h3 id="contador-clientes">0</h3>
           </div>
           <div class="col-md-4">
@@ -95,12 +95,14 @@
   </div>
 </div>
 
-<div class="row">
-  <div class="col-md-6">
-    <canvas id="grafico-barras"></canvas>
-  </div>
-  <div class="col-md-6">
-    <canvas id="grafico-dona"></canvas>
+<div class="card shadow-md rounded-3">
+  <div class="row mb-3 row-cols-1 row-cols-md-2 g-4">
+    <div class="col">
+      <canvas class="m-4" id="grafico-barras"></canvas>
+    </div>
+    <div class="col">
+      <canvas class="m-4" id="grafico-dona"></canvas>
+    </div>
   </div>
 </div>
 

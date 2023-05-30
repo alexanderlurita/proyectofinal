@@ -9,10 +9,10 @@ class Mesa extends Conexion{
     $this->conexion = parent::getConexion();
   }
 
-  public function listar($estado = "") {
+  public function listar() {
     try {
-      $consulta = $this->conexion->prepare("CALL spu_mesas_listar(?)");
-      $consulta->execute(array($estado));
+      $consulta = $this->conexion->prepare("CALL spu_mesas_listar()");
+      $consulta->execute();
       return $consulta->fetchAll(PDO::FETCH_ASSOC);
     } catch(Exception $e) {
       die($e->getMessage());

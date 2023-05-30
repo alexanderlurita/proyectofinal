@@ -30,6 +30,10 @@
   </tbody>
 </table>
 
+<div class="row rows-cols-1 row-cols-md-5 g-4" id="contenedor-mesas">
+  
+</div>
+
 <!-- Modales -->
 <!-- Primer modal Nueva venta -->
 <div class="modal fade" id="modal-nueva-venta" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
