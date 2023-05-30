@@ -1,36 +1,13 @@
-<style>
-  #tabla-ventas tbody i{
-    font-size: 15px;
-  }
-  
-</style>
-
-<h3>Ventas</h3>
+<h3>Registro de órdenes</h3>
 <hr>
 
 <div class="">
   <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-nueva-venta">
-    Nueva venta
+    Nueva orden
   </button>
 </div>
 
-<table id="tabla-ventas" class="table table-sm table-striped mt-2">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Mesa</th>
-      <th>Cliente</th>
-      <th>Fecha</th>
-      <th>Estado</th>
-      <th>Operaciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    
-  </tbody>
-</table>
-
-<div class="row rows-cols-1 row-cols-md-5 g-4" id="contenedor-mesas">
+<div class="row mt-1 rows-cols-1 row-cols-md-5 g-4" id="contenedor-mesas">
   
 </div>
 
@@ -40,39 +17,33 @@
   <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-primary text-light">
-        <h1 class="modal-title fs-5" id="staticBackdropLabel">Nueva venta</h1>
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Nueva orden</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form action="" autocomplete="off" id="formulario-nueva-venta">
-          <div class="row text-end">
-            <span class="col-form-label fw-semibold">Fecha: <span class="fw-normal"><?php echo date('d/m/Y'); ?></span></span>
-          </div>
-          <div class="row text-end">
-            <span class="col-form-label fw-semibold">Hora: <span class="fw-normal"><?php echo date('h:i:s a'); ?></span></span>
-          </div>
-
-          <div class="row mb-5">
-            <div class="col-md-3">
-              <label for="md-mesas" class="col-form-label fw-semibold">Mesa:</label>
-              <select name="md-mesas" id="md-mesas" class="form-select">
-                <option value="">Seleccione</option>
-              </select>
+          <div class="row mb-5 d-flex justify-content-between">
+            <div class="col-md-5 text-start mb-1">
+              <div>
+                <span class="col-form-label fw-semibold">Fecha: <span class="fw-normal"><?php echo date('d/m/Y'); ?></span></span>
+              </div>  
+              <div>
+                <span class="col-form-label fw-semibold">Hora: <span id="hora" class="fw-normal"></span></span>
+              </div>
             </div>
-            <div class="col-md-4">
-              <label for="md-clientes" class="col-form-label fw-semibold">Cliente:</label>
-              <select type="text" id="md-clientes" class="form-select">
-                <option value="">Seleccione</option>
-              </select>
+            <div class="col-md-3 mb-1">
+              <label for="md-mesa" class="col-form-label fw-semibold">Mesa:</label>
+              <input type="text" class="form-control" id="md-mesa" readonly>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 mb-1">
               <label for="md-empleados" class="col-form-label fw-semibold">Mesero:</label>
               <select type="text" id="md-empleados" class="form-select">
                 <option value="">Seleccione</option>
               </select>
             </div>
           </div>
-          <div class="row mb-5">
+
+          <div class="row mt-2 mb-5">
             <div class="col-md-5">
               <label for="md-productos" class="col-form-label fw-semibold">Producto:</label>
               <select class="form-select" id="md-productos">
@@ -143,42 +114,31 @@
   <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header bg-primary text-light">
-        <h5 class="modal-title" id="modalTitleId">Datos de la venta</h5>
+        <h5 class="modal-title" id="modalTitleId">Detalles de la orden</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
 
-        <div class="row mb-2 justify-content-end">
-          <div class="col-md-3">
-            <label class="col-form-label col-form-label-sm fw-semibold">Fecha y hora:</label>
-            <input id="det-fechahora" type="text" class="form-control form-control-sm" readonly>
+        <div class="row mb-3 justify-content-end">
+          <div class="col-md-4">
+            <label class="col-form-label fw-semibold">Fecha y hora:</label>
+            <input id="det-fechahora" type="text" class="form-control" readonly>
           </div>
         </div>
 
-        <div class="row mb-2">
+        <div class="row mb-3">
           <div class="col-md-6">
-            <label class="col-form-label col-form-label-sm fw-semibold">Cliente:</label>
-            <input id="det-cliente" type="text" class="form-control form-control-sm" readonly>
+            <label class="col-form-label fw-semibold">Mesa:</label>
+            <input id="det-mesa" type="text" class="form-control" readonly>
           </div>
           <div class="col-md-6">
-            <label class="col-form-label col-form-label-sm fw-semibold">Mesero:</label>
-            <input id="det-mesero" type="text" class="form-control form-control-sm" readonly>
+            <label class="col-form-label fw-semibold">Mesero:</label>
+            <input id="det-mesero" type="text" class="form-control" readonly>
           </div>
         </div>
-
-        <div class="row mb-2">
-          <div class="col-md-6">
-            <label class="col-form-label col-form-label-sm fw-semibold">Tipo comprobante:</label>
-            <input id="det-tipocomprobante" type="text" class="form-control form-control-sm" readonly>
-          </div>
-          <div class="col-md-6">
-            <label class="col-form-label col-form-label-sm fw-semibold">N° comprobante:</label>
-            <input id="det-numcomprobante" type="text" class="form-control form-control-sm" readonly>
-          </div>
-        </div>          
 
         <div class="mb-3">
-          <table id="tabla-detalles" class="table table-sm table-stripped">
+          <table id="tabla-detalles" class="table table-sm table-striped">
             <thead>
               <tr>
                 <th>#</th>
@@ -195,27 +155,27 @@
         </div>
 
         <div class="row justify-content-end mb-1">
-          <label for="det-subtotal" class="col-form-label col-form-label-sm col-sm-1 fw-semibold">Subtotal:</label>
+          <label for="det-subtotal" class="col-form-label col-sm-2 fw-semibold text-end">Subtotal:</label>
           <div class="col-sm-2">
-            <input id="det-subtotal" type="text" class="form-control form-control-sm text-end" readonly>
+            <input id="det-subtotal" type="text" class="form-control text-end" readonly>
           </div>
         </div>
         <div class="row justify-content-end mb-1">
-          <label for="det-igv" class="col-form-label col-form-label-sm col-sm-1 fw-semibold">IGV:</label>
+          <label for="det-igv" class="col-form-label col-sm-2 fw-semibold text-end">IGV:</label>
           <div class="col-sm-2">
-            <input id="det-igv" type="text" class="form-control form-control-sm text-end" readonly>
+            <input id="det-igv" type="text" class="form-control text-end" readonly>
           </div>
         </div>
         <div class="row justify-content-end mb-1">
-          <label for="det-total" class="col-form-label col-form-label-sm col-sm-1 fw-semibold">Total:</label>
+          <label for="det-total" class="col-form-label col-sm-2 fw-semibold text-end">Total:</label>
           <div class="col-sm-2">
-            <input id="det-total" type="text" class="form-control form-control-sm text-end" readonly>
+            <input id="det-total" type="text" class="form-control text-end" readonly>
           </div>
         </div>
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
       </div>
     </div>
   </div>

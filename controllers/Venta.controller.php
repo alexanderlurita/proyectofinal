@@ -19,7 +19,6 @@ if (isset($_POST['operacion'])) {
   if ($_POST['operacion'] == 'registrar') {
     $datos = [
       "idmesa"      => $_POST["idmesa"],
-      "idcliente"   => $_POST["idcliente"],
       "idempleado"  => $_POST["idempleado"]
     ];
     $resultado = $venta->registrar($datos);
@@ -36,11 +35,21 @@ if (isset($_POST['operacion'])) {
     echo json_encode($resultado);
   }
 
-  if ($_POST['operacion'] == 'detallar') {
-    $datos = $venta->detallar($_POST['idventa']);
+  if ($_POST['operacion'] == 'obtenerIdVentaPorMesa') {
+    $datos = $venta->obtenerIdVentaPorMesa($_POST['idmesa']);
     echo json_encode($datos);
   }
 
+  if ($_POST['operacion'] == 'detallar') {
+    $datos = [
+      "idventa" => $_POST["idventa"],
+      "idmesa" => $_POST["idmesa"],
+    ];
+    $resultado = $venta->detallar($datos);
+    echo json_encode($resultado);
+  }
+
+  // Operaciones para gráficos con ChartJS
   if ($_POST['operacion'] == 'obtenerVentasTipo') {
     $datos = $venta->obtenerVentasTipo();
     echo json_encode($datos);

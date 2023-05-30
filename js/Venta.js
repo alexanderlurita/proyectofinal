@@ -1,9 +1,8 @@
 //Todo el script se ejecutará cuando la vista esté totalmente cargada
 document.addEventListener("DOMContentLoaded", () => {
   //Seleccionamos algunas etiquetas y las guardamos en constantes
-  const table = document.querySelector("#tabla-ventas");
-  const tableBody = table.querySelector("tbody");
   const tablesContainer = document.querySelector("#contenedor-mesas");
+
   //Instanciamos los modales para poder usar sus métodos
   const mdNuevaVenta = new bootstrap.Modal(
     document.querySelector("#modal-nueva-venta")
@@ -20,56 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //Variable global que se usará al agregar un producto SOLO a una venta pendiente
   let idventa = 0;
-
-  //Función que renderizará las ventas en la tabla-ventas
-  function loadSales() {
-    //Manipulamos y extraemos la información para enviarla como parámetros
-    const pm = new URLSearchParams();
-    pm.append("operacion", "listar");
-    //Hacemos la consulta al controlador
-    fetch("./controllers/Venta.controller.php", {
-      method: "POST",
-      body: pm,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        //Le pasamos una cadena vacia al cuerpo de la tabla para que no liste duplicados
-        tableBody.innerHTML = "";
-        //Recorremos la data enviaba por el controlador
-        data.forEach((element) => {
-          //Creamos un operador condicional, donde convertiremos el valor del estado
-          let estado =
-            element.estado === "PA"
-              ? "Pagado"
-              : element.estado === "PE"
-              ? "Pendiente"
-              : "Cancelado";
-          //construimos la fila a insertar
-          const row = `
-            <tr>
-              <td>${element.idventa}</td>
-              <td>${element.nombremesa}</td>
-              <td>${element.cliente}</td>
-              <td>${element.fechahoraorden}</td>
-              <td>${estado}</td>
-              <td>
-                <a class='detallar btn btn-primary btn-sm' data-idventa='${element.idventa}'>
-                  <i class="fa-solid fa-list"></i>
-                </a>
-                <a class='agregar-producto btn btn-primary btn-sm' data-idventa='${element.idventa}'>
-                  <i class="fa-solid fa-plus"></i>
-                </a>
-                <a class='cambiar-estado btn btn-success btn-sm' data-idventa='${element.idventa}'>
-                  <i class="fa-solid fa-money-check-dollar"></i>
-                </a>
-              </td>
-            </tr>
-          `;
-          //Agregamos la fila al cuerpo de la tabla
-          tableBody.innerHTML += row;
-        });
-      });
-  }
 
   function renderTables() {
     const pm = new URLSearchParams();
@@ -120,155 +69,132 @@ document.addEventListener("DOMContentLoaded", () => {
 
   tablesContainer.addEventListener("click", (e) => {
     const card = e.target.closest(".card");
-    if (card){
-      const button = e.target.closest('.btn');
-      if (!button) {
-        if (card.dataset.status === "D") {
-          mdNuevaVenta.toggle();
-        } else {
-          alert("Mesa no disponible")
-        }
+
+    if (card && !e.target.closest('.btn')){
+      if (card.dataset.status === "D") {
+        //Antes de establecer datos reiniciciamos el formulario y la tabla
+        document.querySelector("#formulario-nueva-venta").reset();
+        document.querySelector("#md-tabla-detalles tbody").innerHTML = "";
+        
+        document.querySelector("#md-mesa").dataset.idmesa = card.dataset.idmesa;
+        document.querySelector("#md-mesa").value = card.querySelector("h4").textContent;
+
+        mdNuevaVenta.toggle();
+      } else {
+        alert("Mesa no disponible")
+      }
+    }
+
+    if (
+      e.target.classList.contains("detallar") || 
+      e.target.parentElement.classList.contains("detallar")
+    ) {
+      if (card.dataset.status === 'O') {
+        loadDetails(card.dataset.idmesa);
+      } else {
+        alert("La mesa no está siendo ocupada");
       }
     }
   })
 
   //Función que cargará los detalles de una venta en el modal detalles-venta
-  function loadDetails(idventa) {
-    //Construimos los parámetros de a enviar
-    const pmSearch = new URLSearchParams();
-    pmSearch.append("operacion", "buscar");
-    pmSearch.append("idventa", idventa);
-
-    const pmDetails = new URLSearchParams();
-    pmDetails.append("operacion", "detallar");
-    pmDetails.append("idventa", idventa);
-
-    //Realizamos las diferentes solicitudes al controlador
-    const solicitud1 = fetch("./controllers/Venta.controller.php", {
-      method: "POST",
-      body: pmSearch,
-    });
-
-    const solicitud2 = fetch("./controllers/Venta.controller.php", {
-      method: "POST",
-      body: pmDetails,
-    });
-
-    //Manejamos las solicitudes al mismo tiempo con Promise
-    Promise.all([solicitud1, solicitud2])
-      .then((response) => {
-        //Convertimos a json cada respuesta
-        const response1 = response[0].json();
-        const response2 = response[1].json();
-        return Promise.all([response1, response2]);
-      })
-      .then((data) => {
-        //Y guardamos en una constante los datos recibimos
-        const dataSearch = data[0];
-        const dataDetails = data[1];
-
-        //Establecemos los valores en sus respectivas cajas de texto
-        document.querySelector("#det-fechahora").value =
-          dataSearch.fechahoraventa;
-        document.querySelector("#det-cliente").value = dataSearch.cliente;
-        document.querySelector("#det-mesero").value = dataSearch.mesero;
-        //Operador condicional, verificará si existe un tipo de comprobante para
-        //posteriormente convertir el valor del estado
-        document.querySelector("#det-tipocomprobante").value =
-          dataSearch.tipocomprobante === "B"
-            ? "Boleta"
-            : dataSearch.tipocomprobante === "F"
-            ? "Factura"
-            : "";
-        document.querySelector("#det-numcomprobante").value =
-          dataSearch.numcomprobante;
-
-        //Dejamos vacia el cuerpo de la tabla-detalles
-        document.querySelector("#tabla-detalles tbody").innerHTML = "";
-        //Lo mismo con las cajas de texto subtotal, igv y total neto
-        let subtotal = 0.0;
-        let igv = 0.0;
-        let total = 0.0;
-        let numRow = 1;
-        //Recorremos la data de detalles
-        dataDetails.forEach((element) => {
-          //Construimos la fila
-          const row = `
-            <tr>
-              <td>${numRow}</td>
-              <td>${element.nombreproducto}</td>
-              <td>${element.cantidad}</td>
-              <td>${element.precioproducto}</td>
-              <td>${element.importe}</td>
-            </tr>
-          `;
-          numRow++;
-          //La agregamos al cuerpo de la tabla
-          document.querySelector("#tabla-detalles tbody").innerHTML += row;
-          //Y actualizamos el total
-          total += parseFloat(element.importe);
-        });
-
-        //Calculamos el igv y el subtotal
-        igv = total * 0.18;
-        subtotal = total - igv;
-
-        //Y para finalizar establecemos los valores en sus respectivas cajas de texto
-        //el método toFixed() formatea el número con una cantidad de decimales
-        document.querySelector("#det-subtotal").value = subtotal.toFixed(2);
-        document.querySelector("#det-igv").value = igv.toFixed(2);
-        document.querySelector("#det-total").value = total.toFixed(2);
-
-        //Abrimos el modal ya renderizado
-        mdDetallesVenta.toggle();
-      })
-      .catch((err) => {
-        //En caso haya una error en alguna solicitud mostraremos una alerta
-        console.error(err);
-        alert("Problemas al consultar los detalles");
-      });
-  }
-
-  //Función que cargará la lista(select) de mesas
-  function loadTables() {
+  function loadDetails(idmesa) {
+    //Parámetros iniciales para obtener el ID de la venta sobre la mesa actual (OCUPADA)
     const pm = new URLSearchParams();
-    pm.append("operacion", "listar");
-    //Se realiza la consulta al controlador
-    fetch("./controllers/Mesa.controller.php", {
-      method: "POST",
-      body: pm,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        //Recorremos los datos
-        data.forEach((element) => {
-          //Creamos una etiqueta option
-          const option = document.createElement("option");
-          option.textContent = element.nombremesa;
-          option.value = element.idmesa;
-          //Y la insertamos en el select mesas
-          document.getElementById("md-mesas").appendChild(option);
-        });
-      });
-  }
+    pm.append("operacion", "obtenerIdVentaPorMesa");
+    pm.append("idmesa", idmesa)
 
-  //Función que cargará la lista(select) de clientes
-  function loadCustomers() {
-    const pm = new URLSearchParams();
-    pm.append("operacion", "listar");
-    fetch("./controllers/Persona.controller.php", {
-      method: "POST",
-      body: pm,
+    fetch("./controllers/Venta.controller.php", {
+      method: 'POST',
+      body: pm
     })
-      .then((response) => response.json())
-      .then((data) => {
-        data.forEach((element) => {
-          const option = document.createElement("option");
-          option.textContent = element.apellidos + " " + element.nombres;
-          option.value = element.idpersona;
-          document.getElementById("md-clientes").appendChild(option);
+      .then(response => response.json())
+      .then(data => {
+        const idventa = data[0];
+        //Construimos los parámetros de a enviar
+        const pmSearch = new URLSearchParams();
+        pmSearch.append("operacion", "buscar");
+        pmSearch.append("idventa", idventa);
+    
+        const pmDetails = new URLSearchParams();
+        pmDetails.append("operacion", "detallar");
+        pmDetails.append("idventa", idventa);
+        pmDetails.append("idmesa", idmesa);
+    
+        //Realizamos las diferentes solicitudes al controlador
+        const solicitud1 = fetch("./controllers/Venta.controller.php", {
+          method: "POST",
+          body: pmSearch,
         });
-      });
+    
+        const solicitud2 = fetch("./controllers/Venta.controller.php", {
+          method: "POST",
+          body: pmDetails,
+        });
+    
+        //Manejamos las solicitudes al mismo tiempo con Promise
+        Promise.all([solicitud1, solicitud2])
+          .then((response) => {
+            //Convertimos a json cada respuesta
+            const response1 = response[0].json();
+            const response2 = response[1].json();
+            return Promise.all([response1, response2]);
+          })
+          .then((data) => {
+            //Y guardamos en una constante los datos recibimos
+            const dataSearch = data[0];
+            const dataDetails = data[1];
+    
+            //Establecemos los valores en sus respectivas cajas de texto
+            document.querySelector("#det-fechahora").value = dataSearch.fechahoraorden;
+            document.querySelector("#det-mesa").value = dataSearch.nombremesa;
+            document.querySelector("#det-mesero").value = dataSearch.mesero;
+    
+            //Dejamos vacia el cuerpo de la tabla-detalles
+            document.querySelector("#tabla-detalles tbody").innerHTML = "";
+            //Lo mismo con las cajas de texto subtotal, igv y total neto
+            let subtotal = 0.0;
+            let igv = 0.0;
+            let total = 0.0;
+            let numRow = 1;
+            //Recorremos la data de detalles
+            dataDetails.forEach((element) => {
+              //Construimos la fila
+              const row = `
+                <tr>
+                  <td>${numRow}</td>
+                  <td>${element.nombreproducto}</td>
+                  <td>${element.cantidad}</td>
+                  <td>${element.precioproducto}</td>
+                  <td>${element.importe}</td>
+                </tr>
+              `;
+              numRow++;
+              //La agregamos al cuerpo de la tabla
+              document.querySelector("#tabla-detalles tbody").innerHTML += row;
+              //Y actualizamos el total
+              total += parseFloat(element.importe);
+            });
+    
+            //Calculamos el igv y el subtotal
+            igv = total * 0.18;
+            subtotal = total - igv;
+    
+            //Y para finalizar establecemos los valores en sus respectivas cajas de texto
+            //el método toFixed() formatea el número con una cantidad de decimales
+            document.querySelector("#det-subtotal").value = subtotal.toFixed(2);
+            document.querySelector("#det-igv").value = igv.toFixed(2);
+            document.querySelector("#det-total").value = total.toFixed(2);
+    
+            //Abrimos el modal ya renderizado
+            mdDetallesVenta.toggle();
+          })
+          .catch((err) => {
+            //En caso haya una error en alguna solicitud mostraremos una alerta
+            console.error(err);
+            alert("Problemas al consultar los detalles");
+          });
+      })
   }
 
   //Función que cargará la lista(select) de empleados solo (MESEROS)
@@ -444,8 +370,7 @@ document.addEventListener("DOMContentLoaded", () => {
   //Función que registrará una nueva venta(pedido)
   function registerSale() {
     if (
-      !document.querySelector("#md-mesas").value ||
-      !document.querySelector("#md-clientes").value ||
+      !document.querySelector("#md-mesa").value ||
       !document.querySelector("#md-empleados").value ||
       !document.querySelector("#md-tabla-detalles tbody").childElementCount
     ) {
@@ -457,11 +382,7 @@ document.addEventListener("DOMContentLoaded", () => {
         pmVenta.append("operacion", "registrar");
         pmVenta.append(
           "idmesa",
-          parseInt(document.querySelector("#md-mesas").value)
-        );
-        pmVenta.append(
-          "idcliente",
-          parseInt(document.querySelector("#md-clientes").value)
+          parseInt(document.querySelector("#md-mesa").dataset.idmesa)
         );
         pmVenta.append(
           "idempleado",
@@ -499,16 +420,23 @@ document.addEventListener("DOMContentLoaded", () => {
                   method: "POST",
                   body: pmDetalle,
                 })
-                  .then((response) => response.json())
-                  .then((data) => {
-                    console.log(data.success);
-                  });
               });
+
+              const pmMesa = new URLSearchParams();
+              pmMesa.append("operacion", "cambiarEstado");
+              pmMesa.append("idmesa", document.querySelector("#md-mesa").dataset.idmesa)
+              pmMesa.append("estado", "O")
+
+              fetch("./controllers/Mesa.controller.php", {
+                method: "POST",
+                body: pmMesa
+              })
+
               //Esto no mostrará nada porque deberia pasar por detrás del sistema
               mdNuevaVenta.toggle(); //Cerramos el modal
               document.querySelector("#formulario-nueva-venta").reset(); //Reiniciamos el formulario del modal
               document.querySelector("#md-tabla-detalles tbody").innerHTML = ""; //Dejamos vacia la tabla de detalles
-              loadSales(); //Renderizamos la tabla principal
+              renderTables(); //Renderizamos la tabla principal
             } else {
               //Si no mostramos el mensaje
               alert(data.message);
@@ -553,8 +481,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  //Función que actualizará la hora en tiempo real
+  function actualizarHora() {
+    const fechaActual = new Date();
+    let horas = fechaActual.getHours();
+    const minutos = fechaActual.getMinutes();
+    const segundos = fechaActual.getSeconds();
+    const ampm = horas >= 12 ? 'PM' : 'AM';
+
+    // Convertir a formato de 12 horas
+    horas = horas % 12 || 12;
+
+    const hora = `${horas}:${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')} ${ampm}`;
+    document.getElementById("hora").textContent = hora;
+  }
+
   // Evento click en las columnas operaciones de la tabla principal
-  tableBody.addEventListener("click", (e) => {
+  /* tableBody.addEventListener("click", (e) => {
     //botón detallar
     if (
       e.target.classList.contains("detallar") ||
@@ -595,7 +538,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ) {
       mdCambiarEstado.toggle();
     }
-  });
+  }); */
 
   //Evento change de la lista productos
   document.querySelector("#md-productos").addEventListener("change", (e) => {
@@ -728,12 +671,11 @@ document.addEventListener("DOMContentLoaded", () => {
       addDetail(idventa);
     });
 
-  //mdNuevaVenta.toggle()
   //Evento click en la tabla md-detalles, se encuentra en el primer modal (NUEVA VENTA)
   document
     .querySelector("#md-tabla-detalles tbody")
     .addEventListener("click", (e) => {
-      //Primer botón
+      //Primer botón (ELIMINAR FILA)
       if (
         e.target.classList.contains("md-eliminar-fila") ||
         e.target.parentElement.classList.contains("md-eliminar-fila")
@@ -743,7 +685,7 @@ document.addEventListener("DOMContentLoaded", () => {
         calculateAmounts();
       }
 
-      //Segundo botón
+      //Segundo botón (DISMINUIR)
       if (
         e.target.classList.contains("md-disminuir-producto") ||
         e.target.parentElement.classList.contains("md-disminuir-producto")
@@ -760,19 +702,34 @@ document.addEventListener("DOMContentLoaded", () => {
         calculateAmounts();
       }
 
+      //Tercer botón (AUMENTAR)
       if (
         e.target.classList.contains("md-aumentar-producto") ||
         e.target.parentElement.classList.contains("md-aumentar-producto")
       ) {
         const row = e.target.closest("tr");
+        const nombreProducto = row.cells[1].textContent;
+
+        let options = document.querySelector("#md-productos").options;
+        let stock = null;
+
+        for (let i = 0; i < options.length; i++) {
+          if (options[i].text === nombreProducto) {
+            stock = options[i].dataset.stock;
+            break;
+          }
+        }
+
+        if (parseInt(stock) <= parseInt(row.cells[2].textContent)) {
+          alert("Limite de stock")
+          return;
+        }
+
         row.cells[2].textContent = parseInt(row.cells[2].textContent) + 1;
         row.cells[4].textContent = (
           parseInt(row.cells[2].textContent) *
           parseFloat(row.cells[3].textContent)
         ).toFixed(2);
-
-        let options = document.querySelector("#md-productos").options;
-        console.log(options);
 
         calculateAmounts();
       }
@@ -784,10 +741,10 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("click", registerSale);
 
   //Funciones automáticas
-  loadSales();
   renderTables();
-  loadTables();
-  loadCustomers();
   loadEmployees();
   loadProducts();
+
+  // Actualizar la hora cada segundo
+  setInterval(actualizarHora, 1000);
 });

@@ -130,6 +130,35 @@ INSERT INTO personas (apellidos, nombres, dni, telefono, correo, direccion) VALU
 	('Pachas', 'Kiara', '69850766', '999881122', NULL, NULL),
 	('Medina de la Cruz', 'Carmen',  '14093899',NULL, 'carmenmedina@hotmail.com', NULL),
 	('Guerrero Farfán', 'Jesús', '85043143', NULL, NULL, 'Condominio Los Sauces');
+
+INSERT INTO personas (apellidos, nombres, dni, telefono, correo, direccion) VALUES
+	('García Hernández', 'María', '53297846', '912345678', 'mgarcia@gmail.com', 'Calle Mayor, 123'),
+	('López Rodríguez', 'Juan', '70984125', '667890123', 'jlopez@hotmail.com', 'Avenida Libertad, 456'),
+	('Martínez González', 'Laura', '42169783', '644567890', 'lauramartinez@gmail.com', 'Calle Sol, 789'),
+	('Rodríguez Fernández', 'Carlos', '36589247', '912345678', 'crodriguez@gmail.com', 'Calle Luna, 234'),
+	('Hernández Sánchez', 'Ana', '57698342', '667890123', 'ahernandez@hotmail.com', 'Avenida Principal, 567'),
+	('Gómez Ramírez', 'Pedro', '64821735', '644567890', 'pgomez@gmail.com', 'Calle Central, 890'),
+	('López García', 'Sofía', '47382916', '912345678', 'slopez@gmail.com', 'Calle Primavera, 345'),
+	('Sánchez Torres', 'Marta', '39214758', '667890123', 'msanchez@hotmail.com', 'Avenida del Parque, 678'),
+	('Pérez Martínez', 'Luis', '62873941', '644567890', 'lperez@gmail.com', 'Calle Jardín, 901'),
+	('Ramírez Jiménez', 'Isabel', '41273958', '912345678', 'iramirez@gmail.com', 'Calle Verano, 234');
+
+INSERT INTO personas (apellidos, nombres, dni, telefono, correo, direccion) VALUES
+	('González Castro', 'Manuel', '59873214', '667890123', 'mgonzalez@hotmail.com', 'Avenida Central, 567'),
+	('Hernández García', 'Paula', '73628194', '644567890', 'phernandez@gmail.com', 'Calle Otoño, 890'),
+	('Martínez Rodríguez', 'Daniel', '31947285', '912345678', 'dmartinez@gmail.com', 'Calle Invierno, 345'),
+	('López Sánchez', 'Sara', '52793841', '667890123', 'slopez@hotmail.com', 'Avenida Primavera, 678'),
+	('Sánchez Ramírez', 'Alejandro', '46918327', '644567890', 'asanchez@gmail.com', 'Calle Sol, 901'),
+	('Gómez Torres', 'Laura', '68173942', '912345678', 'lgomez@hotmail.com', 'Calle Luna, 234'),
+	('Rodríguez Pérez', 'Marcos', '39472819', '667890123', 'mrodriguez@gmail.com', 'Avenida Libertad, 567'),
+	('Pérez López', 'Carolina', '54873129', '644567890', 'cperez@gmail.com', 'Calle Mayor, 890'),
+	('Ramírez García', 'Javier', '61384927', '912345678', 'jramirez@hotmail.com', 'Calle Central, 123'),
+	('Fernández Martínez', 'Andrea', '27846193', '667890123', 'afernandez@gmail.com', 'Avenida Principal, 456'),
+	('García Sánchez', 'Lucía', '39672841', '644567890', 'lgarcia@hotmail.com', 'Calle Sol, 789'),
+	('Torres Ramírez', 'Juan', '52473918', '912345678', 'jtorres@gmail.com', 'Calle Luna, 234'),
+	('Pérez Sánchez', 'María', '74291835', '667890123', 'mperez@hotmail.com', 'Avenida Libertad, 567'),
+	('López Martínez', 'Pablo', '61394827', '644567890', 'plopez@gmail.com', 'Calle Mayor, 890'),
+	('Rodríguez Torres', 'Laura', '31972846', '912345678', 'lrodriguez@gmail.com', 'Calle Central, 123');
 	
 INSERT INTO turnos (turno, horainicio, horafin) VALUES
 	('Mañana', '08:00:00', '12:00:00'),
@@ -160,6 +189,11 @@ INSERT INTO mesas (nombremesa, capacidad, estado) VALUES
 	('Mesa 9', '3', 'D'),
 	('Mesa 10', '6', 'D');
 	
+INSERT INTO mesas(nombremesa, capacidad) VALUES
+	('Mesa 11', 6),
+	('Mesa 12', 4),
+	('Mesa 13', 2);
+	
 INSERT INTO productos (tipoproducto, nombreproducto, descripcion, precio, stock) VALUES
 	('Entrada', 'Tequeños de Lomo Saltado', '8 unidades de tequeños rellenos de lomo saltado criollo con guacamole', 20, NULL),
 	('Entrada', 'Club Sandwich', 'Pollo, jamón, queso, palta, lechuga y tomate acompañado de papas fritas', 25, NULL),
@@ -170,235 +204,26 @@ INSERT INTO productos (tipoproducto, nombreproducto, descripcion, precio, stock)
 	('Entrada', 'Anticucho de corazón especial', 'Dos palitos de trozos tiernos de corazón de res, acompañados con choclo José Antonio, papa dorada y salsa criolla', 25, NULL),
 	('Plato de fondo', 'Cau Cau', 'Receta en base a trozos de mondongo y papa, acompañada con arroz blanco', 40, NULL),
 	('Bebida', 'Chicha morada', 'Vaso grande de chicha morada + hielos', 5, NULL);
+	
+INSERT INTO productos (tipoproducto, nombreproducto, descripcion, precio, stock) VALUES
+	('Postre', 'Tarta de Manzana', 'Deliciosa tarta de manzana con crujiente de canela y helado de vainilla', 15, 30),
+	('Plato de fondo', 'Lomo de Res a la Parrilla', 'Tierno lomo de res a la parrilla con papas fritas y ensalada mixta', 38, NULL),
+	('Bebida', 'Mojito Clásico', 'Refrescante cóctel de mojito con lima, menta fresca y ron blanco', 10, NULL),
+	('Entrada', 'Ceviche Mixto', 'Ceviche de pescado y mariscos con limón, cebolla morada, ají y camote', 35, NULL),
+	('Postre', 'Flan de Caramelo', 'Suave y cremoso flan de caramelo con salsa de caramelo y trocitos de almendra', 12, 25),
+	('Plato de fondo', 'Pollo a la Brasa', 'Jugoso pollo a la brasa acompañado de papas doradas y salsa huancaina', 30, NULL),
+	('Bebida', 'Margarita de Fresa', 'Refrescante margarita de fresa con tequila, jugo de limón y azúcar', 12, NULL),
+	('Entrada', 'Empanadas Argentinas', 'Deliciosas empanadas argentinas rellenas de carne, pollo o verduras', 18, NULL),
+	('Postre', 'Helado de Chocolate', 'Delicioso helado de chocolate con trocitos de chocolate negro y salsa de chocolate caliente', 8, 21),
+	('Plato de fondo', 'Pasta Alfredo con Camarones', 'Pasta al dente con salsa Alfredo y camarones salteados en mantequilla y ajo', 28, NULL);
 
 INSERT INTO ventas(idmesa, idcliente, idempleado, tipocomprobante, numcomprobante, metodopago, fechahorapago, montopagado, estado) VALUES
 	(2, 7, 3, 'BE', 'BLE-000001', 'Y', DATE_ADD(NOW(), INTERVAL 30 MINUTE), 130, 'PA'),
 	(3, NULL, 3, 'BS', 'BLS-000002', 'E', DATE_ADD(NOW(), INTERVAL 30 MINUTE), 50, 'PA');
 
 INSERT INTO detalle_venta(idventa, idproducto, cantidad, precioproducto) VALUES
-	(1, 1, 2, 20),
-	(1, 8, 2, 40),
-	(1, 9, 2, 5),
-	(2, 5, 2, 20),
-	(2, 6, 2, 5);
-
--- PROCEDIMIENTOS ALMACENADOS
--- USUARIOS
--- LOGIN
-DELIMITER $$
-CREATE PROCEDURE spu_usuarios_login(IN _nombreusuario VARCHAR(50))
-BEGIN
-	SELECT 	usuarios.`idusuario`, personas.`apellidos`, personas.`nombres`,
-				usuarios.`nombreusuario`, usuarios.`claveacceso`, usuarios.`nivelacceso`
-		FROM usuarios
-		INNER JOIN contratos ON contratos.`idcontrato` = usuarios.`idempleado`
-		INNER JOIN personas ON personas.`idpersona` = contratos.`idempleado`		
-		WHERE usuarios.nombreusuario = _nombreusuario AND usuarios.estado = '1';
-END $$
-
--- VENTAS
--- LISTAR VENTAS
-DELIMITER $$
-CREATE PROCEDURE spu_ventas_listar()
-BEGIN
-	SELECT  ventas.`idventa`, 
-		mesas.`nombremesa`,
-		CONCAT(personas.`apellidos`, ' ', personas.`nombres`) 'cliente',
-		ventas.`fechahoraorden`,
-		ventas.`estado`
-		FROM ventas
-		INNER JOIN mesas ON mesas.`idmesa` = ventas.`idmesa`
-		LEFT JOIN personas ON personas.`idpersona` = ventas.`idcliente`
-		WHERE DATE(fechahoraorden) = CURDATE()
-		ORDER BY 1 DESC;
-END $$
-
--- BUSCAR VENTA
-DELIMITER $$
-CREATE PROCEDURE spu_ventas_buscar(IN _idventa INT)
-BEGIN
-	SELECT  ventas.`idventa`, 
-		mesas.`nombremesa`,
-		CONCAT(p1.`apellidos`, ' ', p1.`nombres`) 'cliente',
-		CONCAT(p2.apellidos, ' ', p2.nombres) 'mesero',
-		ventas.`fechahoraorden`,
-		ventas.`tipocomprobante`,
-		ventas.`numcomprobante`,
-		ventas.`estado`
-		FROM ventas
-		INNER JOIN mesas ON mesas.`idmesa` = ventas.`idmesa`
-		LEFT JOIN personas p1 ON p1.`idpersona` = ventas.`idcliente`
-		INNER JOIN contratos ON contratos.`idcontrato` = ventas.`idempleado`
-		INNER JOIN personas p2 ON p2.idpersona = contratos.`idempleado`
-		WHERE ventas.`idventa` = _idventa;
-END $$
-
--- REGISTRAR
-DELIMITER $$
-CREATE PROCEDURE spu_ventas_registrar
-(
-IN _idmesa		TINYINT,
-IN _idcliente		INT,
-IN _idempleado		INT
-)
-BEGIN
-	IF _idcliente = 0 THEN SET _idcliente = NULL; END IF;
-	INSERT INTO ventas(idmesa, idcliente, idempleado) VALUES
-		(_idmesa, _idcliente, _idempleado);
-END $$
-
--- REGISTRAR DETALLES
-DELIMITER $$
-CREATE PROCEDURE spu_ventas_registrar_detalle
-(
-IN _idproducto		INT,
-IN _cantidad		TINYINT,
-IN _precioproducto 	DECIMAL(7,2)
-)
-BEGIN
-	SET @ultima_venta_id = (SELECT MAX(idventa) AS 'last_id' FROM ventas);
-	INSERT INTO detalle_venta(idventa, idproducto, cantidad, precioproducto) VALUES
-		(@ultima_venta_id, _idproducto, _cantidad, _precioproducto);
-END $$
-
--- AGREGAR PRODUCTO - VENTA PENDIENTE
-DELIMITER $$
-CREATE PROCEDURE spu_detalle_venta_registrar
-(
-IN _idventa		INT,
-IN _idproducto		INT,
-IN _cantidad		TINYINT,
-IN _precioproducto 	DECIMAL(7,2)
-)
-BEGIN
-	DECLARE _existe_producto INT;
-	
-	SELECT COUNT(*) INTO _existe_producto FROM detalle_venta WHERE idventa = _idventa AND idproducto = _idproducto;
-	
-	IF _existe_producto > 0 THEN
-		UPDATE detalle_venta SET 
-			cantidad = cantidad + _cantidad 
-		WHERE idventa = _idventa AND idproducto = _idproducto;
-	ELSE
-		INSERT INTO detalle_venta(idventa, idproducto, cantidad, precioproducto) VALUES 
-			(_idventa, _idproducto, _cantidad, _precioproducto);
-	END IF;
-END $$	
-
--- DETALLAR VENTA
-DELIMITER $$
-CREATE PROCEDURE spu_ventas_detallar(IN _idventa INT)
-BEGIN
-	SELECT 	DET.iddetalleventa, 
-		PRO.nombreproducto, 
-		DET.cantidad, 
-		DET.precioproducto,
-		DET.cantidad * DET.precioproducto 'importe'
-		FROM detalle_venta DET
-		INNER JOIN ventas VEN ON VEN.idventa = DET.idventa
-		INNER JOIN productos PRO ON PRO.idproducto = DET.idproducto
-		WHERE DET.idventa = _idventa;
-END $$
-
--- MESAS
--- LISTAR
-DELIMITER $$
-CREATE PROCEDURE spu_mesas_listar() 
-BEGIN
-	SELECT *
-		FROM mesas;
-END $$
-
--- PRODUCTOS
--- LISTAR
-DELIMITER $$
-CREATE PROCEDURE spu_productos_cargaropciones()
-BEGIN
-	SELECT idproducto, nombreproducto, precio, stock
-		FROM productos
-		ORDER BY nombreproducto;
-END $$
-
--- PERSONAS
-DELIMITER $$
-CREATE PROCEDURE spu_personas_listar()
-BEGIN
-	SELECT *
-		FROM personas
-		ORDER BY 2,3;
-END $$
-
--- EMPLEADOS
-DELIMITER $$
-CREATE PROCEDURE spu_empleados_listar()
-BEGIN
-	SELECT 	contratos.idempleado, personas.`apellidos`, personas.`nombres`,
-		contratos.`cargo`, contratos.`idturno`
-		FROM contratos
-		INNER JOIN personas ON personas.`idpersona` = contratos.`idempleado`
-		WHERE contratos.cargo = 'Mesero' AND contratos.estado = '1';
-END $$
-
--- PROCEDIMIENTOS PARA GRÁFICOS
--- GRÁFICO 1
-DELIMITER $$
-CREATE PROCEDURE ObtenerVentasPorTipo()
-BEGIN
-	SELECT p.tipoproducto, SUM(dv.cantidad) AS total_cantidad
-		FROM ventas v
-		INNER JOIN detalle_venta dv ON dv.idventa = v.idventa
-		INNER JOIN productos p ON p.idproducto = dv.idproducto
-		WHERE DATE(v.fechahoraorden) BETWEEN CURDATE() - INTERVAL 6 DAY AND CURDATE()
-		GROUP BY p.tipoproducto;
-END $$
-
--- GRÁFICO 2
-DELIMITER $$
-CREATE PROCEDURE ObtenerVentasPorEmpleado()
-BEGIN
-    SELECT CONCAT(personas.`apellidos`, ' ', personas.`nombres`) AS empleado, COUNT(*) AS total_ventas
-	FROM ventas
-	INNER JOIN contratos ON contratos.`idcontrato` = ventas.`idempleado` 
-	INNER JOIN personas ON personas.`idpersona` = contratos.`idempleado`
-	WHERE ventas.`estado` = 'PA' AND ventas.fechahoraorden >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-	GROUP BY empleado;
-END $$
-
--- CONTADORES PARA EL INICIO
-DELIMITER $$
-CREATE PROCEDURE ObtenerTotalOrdenes()
-BEGIN
-    SELECT COUNT(*) AS total_ordenes FROM ventas;
-END $$
-
-DELIMITER $$
-CREATE PROCEDURE ObtenerTotalVentasPagadas()
-BEGIN
-    SELECT COUNT(*) AS total_ventas 
-	FROM ventas
-	WHERE estado = "PA";
-END $$
-
-DELIMITER $$
-CREATE PROCEDURE ContarProductosConsumidos()
-BEGIN
-    SELECT SUM(cantidad) AS total_productos
-	FROM detalle_venta;
-END $$
-
-DELIMITER $$
-CREATE PROCEDURE ContarClientes()
-BEGIN
-	SELECT COUNT(*) AS total_clientes
-		FROM personas
-		WHERE idpersona NOT IN (SELECT idempleado FROM contratos);
-END $$
-
-
--- PROCEDIMIENTO PARA BUSCAR UNA MESA EN LAS VENTAS DE LAS ÚLTIMAS 24 HORAS
-DELIMITER $$
-CREATE PROCEDURE spu_ventas_buscarmesa(IN _idmesa)
-BEGIN
-	SELECT * 
-		FROM ventas WHERE idmesa = 2;
-END $$
+	(1, 1, 3, 20),
+	(1, 8, 3, 40),
+	(1, 9, 3, 5),
+	(2, 5, 3, 20),
+	(2, 6, 3, 5);

@@ -35,10 +35,9 @@ class Venta extends Conexion{
       "message" => ""
     ];
     try {
-      $consulta = $this->conexion->prepare("CALL spu_ventas_registrar(?,?,?)");
+      $consulta = $this->conexion->prepare("CALL spu_ventas_registrar(?,?)");
       $resultado["success"] = $consulta->execute(array(
         $datos["idmesa"],
-        $datos["idcliente"],
         $datos["idempleado"]
       ));
 
@@ -69,16 +68,30 @@ class Venta extends Conexion{
     }
   }
 
-  public function detallar($idventa = 0) {
+  public function obtenerIdVentaPorMesa($idmesa = 0) {
     try {
-      $consulta = $this->conexion->prepare("CALL spu_ventas_detallar(?)");
-      $consulta->execute(array($idventa));
+      $consulta = $this->conexion->prepare("CALL spu_ventas_obtenerIdVentaPorMesa(?)");
+      $consulta->execute(array($idmesa));
+      return $consulta->fetch(PDO::FETCH_NUM);
+    } catch(Exception $e) {
+      die($e->getMessage());
+    }
+  }
+
+  public function detallar($datos) {
+    try {
+      $consulta = $this->conexion->prepare("CALL spu_ventas_detallar(?,?)");
+      $consulta->execute(array(
+        $datos["idventa"],
+        $datos["idmesa"]
+      ));
       return $consulta->fetchAll(PDO::FETCH_ASSOC);
     } catch(Exception $e) {
       die($e->getMessage());
     }
   }
 
+  // Métodos para gráficos con ChartJS
   public function obtenerVentasTipo() {
     try {
       $consulta = $this->conexion->prepare("CALL ObtenerVentasPorTipo()");

@@ -18,6 +18,25 @@ class Mesa extends Conexion{
       die($e->getMessage());
     }
   }
+
+  public function cambiarEstado($datos = []) {
+    $resultado = [
+      "success" => false,
+      "message" => ""
+    ];
+    try {
+      $consulta = $this->conexion->prepare("CALL spu_mesas_cambiarestado(?,?)");
+      $resultado["success"] = $consulta->execute(array(
+        $datos["idmesa"],
+        $datos["estado"]
+      ));
+
+      $resultado["message"] = ($resultado["success"]) ? "Cambio exitoso" : "Error al cambiar el estado";
+      return $resultado;
+    } catch(Exception $e) {
+      die($e->getMessage());
+    }
+  }
 }
 
 ?>
