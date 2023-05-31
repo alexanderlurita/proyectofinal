@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
         data.forEach((element) => {
           const option = document.createElement("option");
           option.textContent = element.apellidos + " " + element.nombres;
-          option.value = element.idempleado;
+          option.value = element.idcontrato;
           document.getElementById("md-empleados").appendChild(option);
         });
       });
