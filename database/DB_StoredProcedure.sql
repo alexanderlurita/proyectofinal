@@ -49,7 +49,7 @@ BEGIN
 		WHERE ventas.`idventa` = _idventa;
 END $$
 
--- REGISTRAR
+-- REGISTRAR VENTA
 DELIMITER $$
 CREATE PROCEDURE spu_ventas_registrar
 (
@@ -61,7 +61,7 @@ BEGIN
 		(_idmesa, _idempleado);
 END $$
 
--- REGISTRAR DETALLES
+-- REGISTRAR DETALLES DE VENTA RECIÉN CREADA
 DELIMITER $$
 CREATE PROCEDURE spu_ventas_registrar_detalle
 (
@@ -99,7 +99,7 @@ BEGIN
 	END IF;
 END $$	
 
--- DETALLAR VENTA
+-- DETALLAR VENTA Y SUS DETALLES
 DELIMITER $$
 CREATE PROCEDURE spu_ventas_detallar
 (
@@ -128,8 +128,6 @@ BEGIN
 		WHERE mesas.`idmesa` = _idmesa AND ventas.`estado` = 'PE';
 END $$
 
-CALL spu_ventas_buscar(7)
-
 -- MESAS
 -- LISTAR
 DELIMITER $$
@@ -157,12 +155,13 @@ END $$
 DELIMITER $$
 CREATE PROCEDURE spu_productos_cargaropciones()
 BEGIN
-	SELECT idproducto, nombreproducto, precio, stock
+	SELECT idproducto, tipoproducto, nombreproducto, precio, stock
 		FROM productos
 		ORDER BY nombreproducto;
 END $$
 
 -- PERSONAS
+-- LISTAR PERSONAS
 DELIMITER $$
 CREATE PROCEDURE spu_personas_listar()
 BEGIN
@@ -171,11 +170,21 @@ BEGIN
 		ORDER BY 2,3;
 END $$
 
--- EMPLEADOS
+-- BUSCAR PERSONA
+DELIMITER $$
+CREATE PROCEDURE spu_personas_buscar(IN _dni CHAR(8))
+BEGIN
+	SELECT * 
+		FROM personas
+		WHERE dni = _dni;
+END $$
+
+-- CONTRATOS
+-- LISTAR CONTRATOS(EMPLEADOS)
 DELIMITER $$
 CREATE PROCEDURE spu_empleados_listar()
 BEGIN
-	SELECT 	contratos.idempleado, personas.`apellidos`, personas.`nombres`,
+	SELECT 	contratos.idcontrato, personas.`apellidos`, personas.`nombres`,
 		contratos.`cargo`, contratos.`idturno`
 		FROM contratos
 		INNER JOIN personas ON personas.`idpersona` = contratos.`idempleado`

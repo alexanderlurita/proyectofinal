@@ -13,12 +13,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const mdAgregarProducto = new bootstrap.Modal(
     document.querySelector("#modal-agregar-producto")
   );
-  const mdCambiarEstado = new bootstrap.Modal(
-    document.querySelector("#modal-cambiar-estado")
+  const mdProcesarPago = new bootstrap.Modal(
+    document.querySelector("#modal-procesar-pago")
   );
 
+  let productos = [];
+
   //Variable global que se usará al agregar un producto SOLO a una venta pendiente
-  let idventa = 0;
+  let idVentaCard = 0;
+
+  //Objetos del cuarto modal
+  const txDniCliente = document.querySelector("#pp-dni-cliente");
+  const btBuscarCliente = document.getElementById("pp-buscar-cliente");
+  const txApellidosCliente = document.querySelector("#pp-apellidos-cliente");
+  const txNombresCliente = document.querySelector("#pp-nombres-cliente");
 
   function renderTables() {
     const pm = new URLSearchParams();
@@ -67,39 +75,124 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
+  function obtenerIdVentaPorMesa(idMesa) {
+    const pm = new URLSearchParams();
+    pm.append("operacion", "obtenerIdVentaPorMesa");
+    pm.append("idmesa", idMesa);
+  
+    return fetch("./controllers/Venta.controller.php", {
+      method: 'POST',
+      body: pm
+    })
+      .then(response => response.json());
+  }
+
   tablesContainer.addEventListener("click", (e) => {
     const card = e.target.closest(".card");
 
-    if (card && !e.target.closest('.btn')){
-      if (card.dataset.status === "D") {
-        //Antes de establecer datos reiniciciamos el formulario y la tabla
-        document.querySelector("#formulario-nueva-venta").reset();
-        document.querySelector("#md-tabla-detalles tbody").innerHTML = "";
-        
-        document.querySelector("#md-mesa").dataset.idmesa = card.dataset.idmesa;
-        document.querySelector("#md-mesa").value = card.querySelector("h4").textContent;
+    const hasValidCard = card && !e.target.closest('.btn');
+    const isStatusD = card?.dataset.status === 'D';
+    const isStatusO = card?.dataset.status === 'O';
 
-        mdNuevaVenta.toggle();
-      }
+    if (hasValidCard && isStatusD) {
+      //Antes de establecer datos reiniciciamos el formulario y la tabla
+      document.querySelector("#formulario-nueva-venta").reset();
+      document.querySelector("#md-productos").innerHTML = '';
+      document.querySelector("#md-productos").disabled = true
+      document.querySelector("#md-tabla-detalles tbody").innerHTML = "";
+      
+      document.querySelector("#md-mesa").dataset.idmesa = card.dataset.idmesa;
+      document.querySelector("#md-mesa").value = card.querySelector("h4").textContent;
+
+      mdNuevaVenta.toggle();
     }
 
-    if (
-      e.target.classList.contains("detallar") || 
-      e.target.parentElement.classList.contains("detallar")
-    ) {
-      if (card.dataset.status === 'O') {
+    if (isStatusO) {
+      if (e.target.closest('.detallar')) {
         loadDetails(card.dataset.idmesa);
       }
-    }
 
-    if (
-      e.target.classList.contains("agregar-producto") ||
-      e.target.parentElement.classList.contains("agregar-producto")
-    ) {
-      if (card.dataset.status === 'O') {
-        mdAgregarProducto.toggle();
+      if (e.target.closest(".agregar-producto")) {
+        obtenerIdVentaPorMesa(card.dataset.idmesa)
+          .then(data => {
+            idVentaCard = data[0];
+            document.querySelector("#formulario-agregar-producto").reset();
+            document.querySelector("#ap-productos").innerHTML = '';
+            document.querySelector("#ap-productos").disabled = true
+            mdAgregarProducto.toggle();
+          })
+      }
+      
+      if (e.target.closest(".procesar-pago") && isStatusO) {
+        obtenerIdVentaPorMesa(card.dataset.idmesa)
+          .then(data => {
+            idVentaCard = data[0];
+            document.querySelector("#formulario-proceso-pago").reset();
+            document.querySelector("#pp-dni-cliente").disabled = true
+            document.querySelector("#pp-buscar-cliente").disabled = true
+            document.querySelector("#pp-tipocom-boletasimple").checked = true
+            mdProcesarPago.toggle();
+
+            console.log(idVentaCard)
+          })
       }
     }
+  })
+
+  function searchCustomer() {
+    if (!txDniCliente.value || txDniCliente.value.length < 8) {
+      alert("Escriba el DNI del cliente")
+    } else {
+      const pm = new URLSearchParams();
+      pm.append("operacion", "buscar");
+      pm.append("dni", txDniCliente.value);
+
+      fetch("./controllers/Persona.controller.php", {
+        method: "POST",
+        body: pm
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data) {
+            txApellidosCliente.value = data.apellidos;
+            txNombresCliente.value = data.nombres;
+          } else {
+            const pm = new URLSearchParams();
+            pm.append("operacion", "buscarDni")
+            pm.append("numdoc", txDniCliente.value)
+
+            fetch("./controllers/ApiPeru.controller.php", {
+              method: "POST",
+              body: pm
+            })
+              .then(response => {
+                if (response.status == 200 && response.ok) {
+                  return response.json();
+                } else {
+                  throw `Problemas al comunicarse con el servidor`
+                }
+              })
+              .then(data => {
+                if (data.success) {
+                  txApellidosCliente.value = capitalizeWords(data.apellidoPaterno + " " + data.apellidoMaterno);
+                  txNombresCliente.value = capitalizeWords(data.nombres);
+                } else {
+                  alert(data.message);
+                  txApellidosCliente.value = "";
+                  txNombresCliente.value = "";
+                }
+              })
+              .catch(err => {
+                console.error(err)
+              });
+          }
+        })
+    }
+  }
+
+  btBuscarCliente.addEventListener("click", searchCustomer);
+  txDniCliente.addEventListener("keypress", (e) => {
+    if (e.keyCode === 13) searchCustomer();
   })
 
   //Función que cargará los detalles de una venta en el modal detalles-venta
@@ -232,23 +325,79 @@ document.addEventListener("DOMContentLoaded", () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        data.forEach((element) => {
-          const optionMd = document.createElement("option");
-          optionMd.textContent = element.nombreproducto;
-          optionMd.value = element.idproducto;
-          optionMd.setAttribute("data-precio", element.precio);
-          optionMd.setAttribute("data-stock", element.stock);
-          document.querySelector("#md-productos").appendChild(optionMd);
+        const tiposProductoSet = new Set();
+        for (let i = 0; i < data.length; i++) {
+            tiposProductoSet.add(data[i].tipoproducto);
+        }
+        const tiposProductoArray = Array.from(tiposProductoSet).sort();
 
-          const optionAp = document.createElement("option");
-          optionAp.textContent = element.nombreproducto;
-          optionAp.value = element.idproducto;
-          optionAp.setAttribute("data-precio", element.precio);
-          optionAp.setAttribute("data-stock", element.stock);
-          document.querySelector("#ap-productos").appendChild(optionAp);
-        });
+        tiposProductoArray.forEach(tipo => {
+          const option = `<option value='${tipo}'>${tipo}</option>`;
+          document.querySelector("#ap-tipoproducto").innerHTML += option;
+          document.querySelector("#md-tipoproducto").innerHTML += option;
+        })
+
+        productos = data;
       });
   }
+
+  document.querySelector("#md-tipoproducto").addEventListener("change", (e) => {
+    const tipoProductoSeleccionado = e.target.value;
+
+    document.querySelector("#md-productos").innerHTML = '';
+    document.querySelector("#md-precio").value = '';
+    document.querySelector("#md-importe").value = '';
+    if (tipoProductoSeleccionado === '') {
+      document.querySelector("#md-productos").disabled = true;
+    } else {
+      document.querySelector("#md-productos").disabled = false;
+      const filter = productos.filter(
+        ({ tipoproducto }) => tipoproducto === tipoProductoSeleccionado
+      )
+
+      if (!filter.length) document.querySelector("#md-productos").disabled = true;
+
+      document.querySelector("#md-productos").innerHTML = `<option value=''>Seleccione</option>`;
+      filter.forEach(({ idproducto, nombreproducto, precio, stock }) => {
+        document.querySelector("#md-productos").innerHTML += 
+        `
+          <option value='${idproducto}' data-precio=${precio} data-stock=${stock}>
+            ${nombreproducto}
+          </option>
+        `;
+      })
+
+    }
+  });
+
+  document.querySelector("#ap-tipoproducto").addEventListener("change", (e) => {
+    const tipoProductoSeleccionado = e.target.value;
+
+    document.querySelector("#ap-productos").innerHTML = '';
+    document.querySelector("#ap-precio").value = '';
+    document.querySelector("#ap-importe").value = '';
+    if (tipoProductoSeleccionado === '') {
+      document.querySelector("#ap-productos").disabled = true;
+    } else {
+      document.querySelector("#ap-productos").disabled = false;
+      const filter = productos.filter(
+        ({ tipoproducto }) => tipoproducto === tipoProductoSeleccionado
+      )
+
+      if (!filter.length) document.querySelector("#ap-productos").disabled = true;
+
+      document.querySelector("#ap-productos").innerHTML = `<option value=''>Seleccione</option>`;
+      filter.forEach(({ idproducto, nombreproducto, precio, stock }) => {
+        document.querySelector("#ap-productos").innerHTML += 
+        `
+          <option value='${idproducto}' data-precio=${precio} data-stock=${stock}>
+            ${nombreproducto}
+          </option>
+        `;
+      })
+
+    }
+  });
 
   //Función que agregará una fila a la tabla md-tabla-detalles (PROCESO DE REGISTRO)
   function addToDetailsTable() {
@@ -498,52 +647,20 @@ document.addEventListener("DOMContentLoaded", () => {
     horas = horas % 12 || 12;
 
     const hora = `${horas}:${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')} ${ampm}`;
-    document.getElementById("hora").textContent = hora;
+    document.querySelectorAll(".reloj-tiempo-real").forEach(reloj => {
+      reloj.textContent = hora;
+    })
   }
 
-  // Evento click en las columnas operaciones de la tabla principal
-  /* tableBody.addEventListener("click", (e) => {
-    //botón detallar
-    if (
-      e.target.classList.contains("detallar") ||
-      e.target.parentElement.classList.contains("detallar")
-    ) {
-      const detallesButton = e.target.closest(".detallar");
-      const idventa = detallesButton
-        ? detallesButton.dataset.idventa
-        : e.target.parentElement.dataset.idventa;
-      loadDetails(idventa);
-    }
-
-    //botón agregar nuevo producto
-    if (
-      e.target.classList.contains("agregar-producto") ||
-      e.target.parentElement.classList.contains("agregar-producto")
-    ) {
-      const trElement = e.target.closest("tr");
-      const tds = trElement.querySelectorAll("td");
-      const tdAnterior = tds[tds.length - 2];
-      const contenidoTdAnterior = tdAnterior.textContent.trim();
-
-      if (contenidoTdAnterior === "Pendiente") {
-        const agregarButton = e.target.closest(".agregar-producto");
-        //Establecemos el id de la venta de la fila para posteriormente usarla
-        idventa = agregarButton
-          ? agregarButton.dataset.idventa
-          : e.target.parentElement.dataset.idventa;
-        mdAgregarProducto.toggle();
-      } else {
-        alert("La venta ya está finalizada");
-      }
-    }
-
-    if (
-      e.target.classList.contains("cambiar-estado") ||
-      e.target.parentElement.classList.contains("cambiar-estado")
-    ) {
-      mdCambiarEstado.toggle();
-    }
-  }); */
+  //Funciones para convertir la primera letra de las cadenas en mayusculas
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  }
+  function capitalizeWords(string) {
+    const words = string.split(' ');
+    const capitalizedWords = words.map(word => capitalizeFirstLetter(word));
+    return capitalizedWords.join(' ');
+  }
 
   //Evento change de la lista productos
   document.querySelector("#md-productos").addEventListener("change", (e) => {
@@ -606,9 +723,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   //Evento click del boton md-agregar-producto del primer modal (NUEVA VENTA)
-  document
-    .querySelector("#md-agregar-producto")
-    .addEventListener("click", addToDetailsTable);
+  document.querySelector("#md-agregar-producto").addEventListener("click", addToDetailsTable);
 
   //Evento change del select productos del tercer modal (AGREGAR PRODUCTO A VENTA PENDIENTE)
   document.querySelector("#ap-productos").addEventListener("change", (e) => {
@@ -669,17 +784,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   //Evento click del boton agregar producto del tercer modal (AGREGAR PRODUCTO A VENTA PENDIENTE)
-  document
-    .querySelector("#ap-agregar-producto")
-    .addEventListener("click", () => {
-      //Le pasamos el idventa global en el cual se guarda el ID de la venta al abrir el tercer modal
-      addDetail(idventa);
-    });
+  document.querySelector("#ap-agregar-producto").addEventListener("click", () => {
+    //Le pasamos el idventa global en el cual se guarda el ID de la venta al abrir el tercer modal
+    addDetail(idVentaCard);
+  });
 
   //Evento click en la tabla md-detalles, se encuentra en el primer modal (NUEVA VENTA)
-  document
-    .querySelector("#md-tabla-detalles tbody")
-    .addEventListener("click", (e) => {
+  document.querySelector("#md-tabla-detalles tbody").addEventListener("click", (e) => {
       //Primer botón (ELIMINAR FILA)
       if (
         e.target.classList.contains("md-eliminar-fila") ||
@@ -741,9 +852,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   //Evento click del boton registrar venta, se encuentra en el primer modal (NUEVA VENTA)
-  document
-    .querySelector("#md-registrar-venta")
-    .addEventListener("click", registerSale);
+  document.querySelector("#md-registrar-venta").addEventListener("click", registerSale);
+
+  document.querySelector("#pp-tipocom-boletasimple").addEventListener("change", () => {
+    document.querySelector("#pp-dni-cliente").disabled = true
+    document.querySelector("#pp-buscar-cliente").disabled = true
+  })
+  
+  document.querySelector("#pp-tipocom-boletaelectronica").addEventListener("change", () => {
+    document.querySelector("#pp-dni-cliente").disabled = false
+    document.querySelector("#pp-buscar-cliente").disabled = false
+  })
 
   //Funciones automáticas
   renderTables();

@@ -1,12 +1,6 @@
 <h3>Registro de órdenes</h3>
 <hr>
 
-<div class="">
-  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-nueva-venta">
-    Nueva orden
-  </button>
-</div>
-
 <div class="row mt-1 rows-cols-1 row-cols-md-5 g-4" id="contenedor-mesas">
   
 </div>
@@ -18,7 +12,6 @@
     <div class="modal-content">
       <div class="modal-header bg-primary text-light">
         <h1 class="modal-title fs-5" id="staticBackdropLabel">Nueva orden</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form action="" autocomplete="off" id="formulario-nueva-venta">
@@ -28,7 +21,7 @@
                 <span class="col-form-label fw-semibold">Fecha: <span class="fw-normal"><?php echo date('d/m/Y'); ?></span></span>
               </div>  
               <div>
-                <span class="col-form-label fw-semibold">Hora: <span id="hora" class="fw-normal"></span></span>
+                <span class="col-form-label fw-semibold">Hora: <span class="reloj-tiempo-real fw-normal"></span></span>
               </div>
             </div>
             <div class="col-md-3 mb-1">
@@ -44,13 +37,17 @@
           </div>
 
           <div class="row mt-2 mb-5">
-            <div class="col-md-5">
-              <label for="md-productos" class="col-form-label fw-semibold">Producto:</label>
-              <select class="form-select" id="md-productos">
+            <div class="col-md-2">
+              <label for="md-tipoproducto" class="col-form-label fw-semibold">Tipo:</label>
+              <select class="form-select" id="md-tipoproducto">
                 <option value="">Seleccione</option>
               </select>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-4">
+              <label for="md-productos" class="col-form-label fw-semibold">Producto:</label>
+              <select class="form-select" id="md-productos" disabled></select>
+            </div>
+            <div class="col-md-1">
               <label for="md-cantidad" class="col-form-label fw-semibold">Cantidad:</label>
               <input type="number" class="form-control" id="md-cantidad" value="1">
             </div>
@@ -183,7 +180,7 @@
 
 <!-- Tercer modal - Agregar nuevo producto a venta pendiente -->
 <div class="modal fade" id="modal-agregar-producto" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header bg-primary text-light">
         <h1 class="modal-title fs-5" id="staticBackdropLabel">Agregar producto</h1>
@@ -191,10 +188,16 @@
       <div class="modal-body">
         <form action="" autocomplete="off" class="container" id="formulario-agregar-producto">
           <div class="row mb-1">
-            <label for="ap-productos" class="col-form-label fw-semibold">Producto:</label>
-            <select class="form-select" id="ap-productos">
-              <option value="">Seleccione</option>
-            </select>
+            <div class="col-md-4">
+              <label for="ap-tipoproducto" class="col-form-label fw-semibold">Tipo:</label>
+              <select class="form-select" id="ap-tipoproducto">
+                <option value="">Seleccione</option>
+              </select>
+            </div>
+            <div class="col-md-8">
+              <label for="ap-productos" class="col-form-label fw-semibold">Producto:</label>
+              <select class="form-select" id="ap-productos" disabled></select>
+            </div>
           </div>
           <div class="row mb-1">
             <div class="col-md-4">
@@ -203,11 +206,11 @@
             </div>
             <div class="col-md-4">
               <label for="ap-precio" class="col-form-label fw-semibold">Precio:</label>
-              <input type="number" class="form-control" id="ap-precio" readonly>
+              <input type="number" class="form-control text-end" id="ap-precio" readonly>
             </div>
             <div class="col-md-4">
               <label for="ap-importe" class="col-form-label fw-semibold">Importe:</label>
-              <input type="number" class="form-control" id="ap-importe" readonly>
+              <input type="number" class="form-control text-end" id="ap-importe" readonly>
             </div>
           </div>
         </form>
@@ -221,22 +224,87 @@
 </div>
 
 <!-- Cuarto modal - Cambiar estado (Pagar - Cancelar) -->
-<div class="modal fade" id="modal-cambiar-estado" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
+<div class="modal fade" id="modal-procesar-pago" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-header bg-success text-light">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Proceso de pago</h1>
       </div>
       <div class="modal-body">
-        ...
+        <form action="" autocomplete="off" id="formulario-proceso-pago">
+
+          <div class="row mb-3">
+            <div class="col">
+              <label class="col-form-label fw-semibold">Tipo de comprobante:</label>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="pp-tipocom-boletasimple" checked>
+                <label class="form-check-label" for="pp-tipocom-boletasimple">
+                  Boleta Simple
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="pp-tipocom-boletaelectronica">
+                <label class="form-check-label" for="pp-tipocom-boletaelectronica">
+                  Boleta Electrónica
+                </label>
+              </div>
+            </div>
+            <div class="col mt-1 text-end">
+              <div>
+                <span class="col-form-label fw-semibold">Fecha: <span class="fw-normal"><?php echo date('d/m/Y'); ?></span></span>
+              </div>  
+              <div>
+                <span class="col-form-label fw-semibold">Hora: <span class="reloj-tiempo-real fw-normal"></span></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label class="col-form-label fw-semibold">Datos del cliente:</label>
+            <div class="col-md-4">
+              <label for="pp-dni-cliente" class="col-form-label fw-semibold">DNI:</label>
+              <div class="input-group">
+                <input class="form-control" type="text" id="pp-dni-cliente" placeholder="Enter para buscar" maxlength="8" disabled>
+                <button class="btn btn-secondary" type="button" id="pp-buscar-cliente" disabled>
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label for="pp-apellidos-cliente" class="col-form-label fw-semibold">Apellidos:</label>
+              <input class="form-control" type="text" id="pp-apellidos-cliente" readonly>
+            </div>
+            <div class="col-md-4">
+              <label for="pp-nombres-cliente" class="col-form-label fw-semibold">Nombres:</label>
+              <input class="form-control" type="text" id="pp-nombres-cliente" readonly>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <label for="pp-metodopago" class="col-form-label fw-semibold">Método de pago:</label>
+              <select class="form-select" id="pp-metodopago">
+                <option value="">Seleccione</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="Yape">Yape</option>
+                <option value="Plin">Plin</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="pp-monto-pago" class="col-form-label fw-semibold">Total a pagar:</label>
+              <input class="form-control" type="text" id="pp-monto-pago" readonly>
+            </div>
+          </div>
+
+        </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Understood</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-success">Confirmar</button>
       </div>
     </div>
   </div>
 </div>
 
-<script src="./js/Venta.js"></script>
+<script src="./js/venta.js"></script>
