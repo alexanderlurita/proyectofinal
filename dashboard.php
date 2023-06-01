@@ -17,6 +17,9 @@ switch ($vista) {
   case 'producto':
     $contenido = 'views/Producto.view.php';
     break;
+  case 'reporte01':
+    $contenido = 'views/reports/Reporte01.view.php';
+    break;
   default:
     $contenido = 'views/Inicio.view.php';
     break;

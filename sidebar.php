@@ -20,7 +20,7 @@
     </a>
     <ul class="nav collapse ms-1 flex-column" id="sidemenu">
       <li class="nav-item">
-        <a class="text-decoration-none px-3 py-2 d-block" href="#">Reporte 1</a>
+        <a class="text-decoration-none px-3 py-2 d-block" href="dashboard.php?vista=reporte01">Reporte 1</a>
       </li>
       <li class="nav-item">
         <a class="text-decoration-none px-3 py-2 d-block" href="#">Reporte 2</a>

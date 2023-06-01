@@ -590,24 +590,24 @@ BEGIN
 END */$$
 DELIMITER ;
 
-/* Procedure structure for procedure `spu_ventas_listar` */
+/* Procedure structure for procedure `spu_ventas_listarPorRangoDeFechas` */
 
-/*!50003 DROP PROCEDURE IF EXISTS  `spu_ventas_listar` */;
+/*!50003 DROP PROCEDURE IF EXISTS  `spu_ventas_listarPorRangoDeFechas` */;
 
 DELIMITER $$
 
-/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_ventas_listar`()
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_ventas_listarPorRangoDeFechas`(
+in _fechainicio date,
+in _fechafin 	date	
+)
 BEGIN
-	SELECT  ventas.`idventa`, 
-		mesas.`nombremesa`,
-		CONCAT(personas.`apellidos`, ' ', personas.`nombres`) 'cliente',
-		ventas.`fechahoraorden`,
-		ventas.`estado`
-		FROM ventas
-		INNER JOIN mesas ON mesas.`idmesa` = ventas.`idmesa`
-		LEFT JOIN personas ON personas.`idpersona` = ventas.`idcliente`
-		WHERE DATE(fechahoraorden) = CURDATE()
-		ORDER BY 1 DESC;
+	SELECT  ventas.`idventa`, mesas.`nombremesa`, 
+		concat(personas.`apellidos`, ' ', personas.`nombres`) as 'cliente',
+		ventas.`fechahoraorden`, ventas.`montopagado`
+		from ventas
+		inner join mesas on mesas.`idmesa` = ventas.`idmesa`
+		left join personas on personas.`idpersona` = ventas.`idcliente`
+		WHERE DATE(fechahoraorden) between _fechainicio and _fechafin;
 END */$$
 DELIMITER ;
 

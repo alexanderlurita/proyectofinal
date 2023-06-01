@@ -13,22 +13,6 @@ BEGIN
 END $$
 
 -- VENTAS
--- LISTAR VENTAS
-DELIMITER $$
-CREATE PROCEDURE spu_ventas_listar()
-BEGIN
-	SELECT  ventas.`idventa`, 
-		mesas.`nombremesa`,
-		CONCAT(personas.`apellidos`, ' ', personas.`nombres`) 'cliente',
-		ventas.`fechahoraorden`,
-		ventas.`estado`
-		FROM ventas
-		INNER JOIN mesas ON mesas.`idmesa` = ventas.`idmesa`
-		LEFT JOIN personas ON personas.`idpersona` = ventas.`idcliente`
-		WHERE DATE(fechahoraorden) = CURDATE()
-		ORDER BY 1 DESC;
-END $$
-
 -- BUSCAR VENTA
 DELIMITER $$
 CREATE PROCEDURE spu_ventas_buscar(IN _idventa INT)
@@ -298,7 +282,7 @@ CREATE PROCEDURE ContarProductosConsumidos()
 BEGIN
     SELECT SUM(cantidad) AS total_productos
 	FROM detalle_venta;
-END $$
+END $$ 
 
 DELIMITER $$
 CREATE PROCEDURE ContarClientes()
@@ -307,3 +291,23 @@ BEGIN
 		FROM personas
 		WHERE idpersona NOT IN (SELECT idempleado FROM contratos);
 END $$
+
+-- REPORTES 
+-- REPORTE 01
+DELIMITER $$
+CREATE PROCEDURE spu_ventas_listarPorRangoDeFechas
+(
+IN _fechainicio DATE,
+IN _fechafin 	DATE	
+)
+BEGIN
+	SELECT  ventas.`idventa`, mesas.`nombremesa`, 
+		CONCAT(personas.`apellidos`, ' ', personas.`nombres`) AS 'cliente',
+		ventas.`fechahoraorden`, ventas.`montopagado`
+		FROM ventas
+		INNER JOIN mesas ON mesas.`idmesa` = ventas.`idmesa`
+		LEFT JOIN personas ON personas.`idpersona` = ventas.`idcliente`
+		WHERE DATE(fechahoraorden) BETWEEN _fechainicio AND _fechafin;
+END $$
+
+CALL spu_ventas_listarPorRangoDeFechas('2023/06/01', '2023/06/01')

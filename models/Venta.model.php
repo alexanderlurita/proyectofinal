@@ -9,16 +9,6 @@ class Venta extends Conexion{
     $this->conexion = parent::getConexion();
   }
 
-  public function listar() {
-    try {
-      $consulta = $this->conexion->prepare("CALL spu_ventas_listar()");
-      $consulta->execute();
-      return $consulta->fetchAll(PDO::FETCH_ASSOC);
-    } catch(Exception $e) {
-      die($e->getMessage());
-    }
-  }
-
   public function buscar($idventa = 0) {
     try {
       $consulta = $this->conexion->prepare("CALL spu_ventas_buscar(?)");
@@ -135,6 +125,21 @@ class Venta extends Conexion{
       die($e->getMessage());
     }
   }
+
+  //Métodos para reportes
+  public function listarRangoFechas($datos = []) {
+    try {
+      $consulta = $this->conexion->prepare("CALL spu_ventas_listarPorRangoDeFechas(?,?)");
+      $consulta->execute(array(
+        $datos["fechainicio"],
+        $datos["fechafin"]
+      ));
+      return $consulta->fetchAll(PDO::FETCH_ASSOC);
+    } catch(Exception $e) {
+      die($e->getMessage());
+    }
+  }
+
   
 }
 

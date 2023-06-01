@@ -6,11 +6,6 @@ if (isset($_POST['operacion'])) {
 
   $venta = new Venta();
 
-  if ($_POST['operacion'] == 'listar') {
-    $datos = $venta->listar();
-    echo json_encode($datos);
-  }
-
   if ($_POST['operacion'] == 'buscar') {
     $datos = $venta->buscar($_POST['idventa']);
     echo json_encode($datos);
@@ -72,6 +67,16 @@ if (isset($_POST['operacion'])) {
   if ($_POST['operacion'] == 'obtenerVentasEmpleado') {
     $datos = $venta->obtenerVentasEmpleado();
     echo json_encode($datos);
+  }
+
+  // Operaciones para reportes
+  if ($_POST['operacion'] == 'listarRangoFechas') {
+    $datos = [
+      "fechainicio"   => $_POST["fechainicio"],
+      "fechafin"      => $_POST["fechafin"]
+    ];
+    $resultado = $venta->listarRangoFechas($datos);
+    echo json_encode($resultado);
   }
 
 }
