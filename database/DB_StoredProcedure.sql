@@ -128,6 +128,63 @@ BEGIN
 		WHERE mesas.`idmesa` = _idmesa AND ventas.`estado` = 'PE';
 END $$
 
+-- ACTUALIZAR VENTA (AGREGAR PAGO)
+DELIMITER $$
+CREATE PROCEDURE spu_ventas_realizarpago
+(
+IN _idventa		INT,
+IN _apellidos		VARCHAR(50),
+IN _nombres		VARCHAR(50),
+IN _dni			CHAR(8),
+IN _tipocomprobante 	CHAR(2),
+IN _metodopago 		CHAR(1),
+IN _montopagado 	DECIMAL(7,2)
+)
+BEGIN
+	-- Variable que guardará el num documento generado
+	DECLARE v_numcomprobante 	VARCHAR(10);
+	DECLARE v_prefijo 		CHAR(4);
+	DECLARE v_idpersona 		INT;
+	
+	IF _tipocomprobante = 'BS' THEN SET v_prefijo = 'BLS-';
+	ELSE SET v_prefijo = 'BLE-'; END IF;
+	
+	SET v_numcomprobante = CONCAT(v_prefijo, LPAD((SELECT MAX(SUBSTRING(numcomprobante, 5))+1 FROM ventas), 6, '0'));
+
+	IF _tipocomprobante = 'BS' THEN
+		-- Actualizamos la venta con cliente en NULL
+		UPDATE ventas SET 
+			idcliente = NULL,
+			tipocomprobante = _tipocomprobante,
+			numcomprobante = v_numcomprobante,
+			metodopago = _metodopago,
+			fechahorapago = NOW(),
+			montopagado = _montopagado,
+			estado = 'PA'
+		WHERE idventa = _idventa;
+	ELSE 
+		-- Buscar el ID del cliente en la tabla personas
+		SET v_idpersona = (SELECT idpersona FROM personas WHERE dni = _dni);
+		
+		IF v_idpersona IS NULL THEN
+			-- Insertamos nuevo cliente en la tabla personas
+			INSERT INTO personas (apellidos, nombres, dni) VALUES
+				(_apellidos, _nombres, _dni);
+			SET v_idpersona = LAST_INSERT_ID();
+		END IF;
+		
+		UPDATE ventas SET 
+			idcliente = v_idpersona,
+			tipocomprobante = _tipocomprobante,
+			numcomprobante = v_numcomprobante,
+			metodopago = _metodopago,
+			fechahorapago = NOW(),
+			montopagado = _montopagado,
+			estado = 'PA'
+		WHERE idventa = _idventa;
+	END IF;
+END $$
+
 -- MESAS
 -- LISTAR
 DELIMITER $$

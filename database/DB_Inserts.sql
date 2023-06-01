@@ -42,6 +42,11 @@ INSERT INTO personas (apellidos, nombres, dni, telefono, correo, direccion) VALU
 	('Pérez Sánchez', 'María', '74291835', '667890123', 'mperez@hotmail.com', 'Avenida Libertad, 567'),
 	('López Martínez', 'Pablo', '61394827', '644567890', 'plopez@gmail.com', 'Calle Mayor, 890'),
 	('Rodríguez Torres', 'Laura', '31972846', '912345678', 'lrodriguez@gmail.com', 'Calle Central, 123');
+
+INSERT INTO personas (apellidos, nombres, dni, telefono, correo, direccion) VALUES
+  ('López Ramírez', 'María', '45682197', '665478912', 'mlopez@gmail.com', 'Calle Principal, 123'),
+  ('Pérez Martínez', 'Juan', '78965432', '669874561', 'jpmartinez@gmail.com', 'Calle Secundaria, 789'),
+  ('Sánchez Herrera', 'Laura', '12345678', '668765432', 'lsanchez@gmail.com', 'Avenida Norte, 321');
 	
 INSERT INTO turnos (turno, horainicio, horafin) VALUES
 	('Mañana', '08:00:00', '12:00:00'),
@@ -52,6 +57,11 @@ INSERT INTO contratos (idempleado, cargo, idturno) VALUES
 	(6, 'Administrador', NULL),
 	(4, 'Chef', 2),
 	(2, 'Mesero', 1);
+	
+INSERT INTO contratos (idempleado, cargo, idturno) VALUES
+	(39, 'Mesero', 2),
+	(40, 'Chef', 3),
+	(41, 'Mesero', 3);
 	
 INSERT INTO usuarios (idempleado, nombreusuario, claveacceso) VALUES
 	(1, 'Alexander', '$2y$10$VCpxnyDPMD//XUMqa3kcPuxKcNwsgUVdaqvYdWUjKKSeCxEqqpB5i'),

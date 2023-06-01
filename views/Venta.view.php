@@ -285,15 +285,15 @@
               <label for="pp-metodopago" class="col-form-label fw-semibold">Método de pago:</label>
               <select class="form-select" id="pp-metodopago">
                 <option value="">Seleccione</option>
-                <option value="Efectivo">Efectivo</option>
-                <option value="Tarjeta">Tarjeta</option>
-                <option value="Yape">Yape</option>
-                <option value="Plin">Plin</option>
+                <option value="E">Efectivo</option>
+                <option value="T">Tarjeta</option>
+                <option value="Y">Yape</option>
+                <option value="P">Plin</option>
               </select>
             </div>
             <div class="col-md-6">
               <label for="pp-monto-pago" class="col-form-label fw-semibold">Total a pagar:</label>
-              <input class="form-control" type="text" id="pp-monto-pago" readonly>
+              <input class="form-control text-end" type="text" id="pp-monto-pago" readonly>
             </div>
           </div>
 
@@ -301,7 +301,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-success">Confirmar</button>
+        <button type="button" class="btn btn-success" id="pp-confirmar-pago">Confirmar</button>
       </div>
     </div>
   </div>

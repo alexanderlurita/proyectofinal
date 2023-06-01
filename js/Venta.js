@@ -20,13 +20,19 @@ document.addEventListener("DOMContentLoaded", () => {
   let productos = [];
 
   //Variable global que se usará al agregar un producto SOLO a una venta pendiente
+  let idMesaCard = 0;
   let idVentaCard = 0;
 
   //Objetos del cuarto modal
   const txDniCliente = document.querySelector("#pp-dni-cliente");
+  const rbBoletaSimple = document.querySelector("#pp-tipocom-boletasimple")
+  const rbBoletaElectronica = document.querySelector("#pp-tipocom-boletaelectronica")
   const btBuscarCliente = document.getElementById("pp-buscar-cliente");
   const txApellidosCliente = document.querySelector("#pp-apellidos-cliente");
   const txNombresCliente = document.querySelector("#pp-nombres-cliente");
+  const slMetodoPago = document.querySelector("#pp-metodopago");
+  const txTotalPagar = document.querySelector("#pp-monto-pago");
+  const btConfirmarPago = document.getElementById("pp-confirmar-pago");
 
   function renderTables() {
     const pm = new URLSearchParams();
@@ -127,13 +133,30 @@ document.addEventListener("DOMContentLoaded", () => {
         obtenerIdVentaPorMesa(card.dataset.idmesa)
           .then(data => {
             idVentaCard = data[0];
+            idMesaCard = card.dataset.idmesa;
             document.querySelector("#formulario-proceso-pago").reset();
             document.querySelector("#pp-dni-cliente").disabled = true
             document.querySelector("#pp-buscar-cliente").disabled = true
             document.querySelector("#pp-tipocom-boletasimple").checked = true
-            mdProcesarPago.toggle();
 
-            console.log(idVentaCard)
+            const pm = new URLSearchParams();
+            pm.append("operacion", "detallar");
+            pm.append("idmesa", idMesaCard);
+            pm.append("idventa", idVentaCard);
+            fetch("./controllers/Venta.controller.php", {
+              method: "POST",
+              body: pm
+            })
+              .then(res => res.json())
+              .then(data => {
+                let totalPagar = 0.0;
+                data.forEach(({ importe }) => {
+                  totalPagar += parseFloat(importe);
+                })
+                txTotalPagar.value = parseFloat(totalPagar).toFixed(2);
+              })
+            mdProcesarPago.toggle();
+            alert(idMesaCard)
           })
       }
     }
@@ -190,10 +213,63 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function payOrder() {
+    if (rbBoletaSimple.checked && !slMetodoPago.value) {
+      alert("Seleccione el método de pago");
+    } else if (
+      !rbBoletaSimple.checked &&
+      (!txDniCliente.value ||
+        !txApellidosCliente.value ||
+        !txNombresCliente.value ||
+        !slMetodoPago.value)
+    ) {
+      alert("Complete los datos por favor");
+    } else {
+      const pm = new URLSearchParams();
+      pm.append("operacion", "realizarPago");
+      pm.append("idventa", idVentaCard);
+      pm.append("apellidos", txApellidosCliente.value);
+      pm.append("nombres", txNombresCliente.value);
+      pm.append("dni", txDniCliente.value);
+      pm.append("tipocomprobante", rbBoletaSimple.checked ? "BS" : "BE");
+      pm.append("metodopago", slMetodoPago.value);
+      pm.append("montopagado", txTotalPagar.value);
+      fetch("./controllers/Venta.controller.php", {
+        method: "POST",
+        body: pm
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            const pm = new URLSearchParams();
+              pm.append("operacion", "cambiarEstado");
+              pm.append("idmesa", idMesaCard)
+              pm.append("estado", "D")
+
+              fetch("./controllers/Mesa.controller.php", {
+                method: "POST",
+                body: pm
+              })
+                .then(res => res.json())
+                .then(data => {
+                  if (data.success) {
+                    mdProcesarPago.toggle();
+                    renderTables();
+                  }
+                })
+          } else {
+            alert(data.message)
+          }
+        })
+    }
+  }
+
   btBuscarCliente.addEventListener("click", searchCustomer);
   txDniCliente.addEventListener("keypress", (e) => {
     if (e.keyCode === 13) searchCustomer();
   })
+
+  btConfirmarPago.addEventListener("click", payOrder);
 
   //Función que cargará los detalles de una venta en el modal detalles-venta
   function loadDetails(idmesa) {

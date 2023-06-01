@@ -43,9 +43,23 @@ if (isset($_POST['operacion'])) {
   if ($_POST['operacion'] == 'detallar') {
     $datos = [
       "idventa" => $_POST["idventa"],
-      "idmesa" => $_POST["idmesa"],
+      "idmesa"  => $_POST["idmesa"]
     ];
     $resultado = $venta->detallar($datos);
+    echo json_encode($resultado);
+  }
+
+  if ($_POST['operacion'] == 'realizarPago') {
+    $datos = [
+      "idventa"         => $_POST["idventa"],
+      "apellidos"       => $_POST["apellidos"],
+      "nombres"         => $_POST["nombres"],
+      "dni"             => $_POST["dni"],
+      "tipocomprobante" => $_POST["tipocomprobante"],
+      "metodopago"      => $_POST["metodopago"],
+      "montopagado"     => $_POST["montopagado"]
+    ];
+    $resultado = $venta->realizarPago($datos);
     echo json_encode($resultado);
   }
 

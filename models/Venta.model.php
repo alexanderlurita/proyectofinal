@@ -78,7 +78,7 @@ class Venta extends Conexion{
     }
   }
 
-  public function detallar($datos) {
+  public function detallar($datos = []) {
     try {
       $consulta = $this->conexion->prepare("CALL spu_ventas_detallar(?,?)");
       $consulta->execute(array(
@@ -86,6 +86,30 @@ class Venta extends Conexion{
         $datos["idmesa"]
       ));
       return $consulta->fetchAll(PDO::FETCH_ASSOC);
+    } catch(Exception $e) {
+      die($e->getMessage());
+    }
+  }
+
+  public function realizarPago($datos = []) {
+    $resultado = [
+      "success" => false,
+      "message" => ""
+    ];
+    try {
+      $consulta = $this->conexion->prepare("CALL spu_ventas_realizarpago(?,?,?,?,?,?,?)");
+      $resultado["success"] = $consulta->execute(array(
+        $datos["idventa"],
+        $datos["apellidos"],
+        $datos["nombres"],
+        $datos["dni"],
+        $datos["tipocomprobante"],
+        $datos["metodopago"],
+        $datos["montopagado"]
+      ));
+
+      $resultado["message"] = ($resultado["success"]) ? "Pago exitoso" : "Error al realizar el pago";
+      return $resultado;
     } catch(Exception $e) {
       die($e->getMessage());
     }

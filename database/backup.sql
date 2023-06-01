@@ -1,6 +1,6 @@
 /*
 SQLyog Ultimate v12.5.1 (64 bit)
-MySQL - 10.4.24-MariaDB : Database - restaurantedb
+MySQL - 10.4.27-MariaDB : Database - restaurantedb
 *********************************************************************
 */
 
@@ -12,7 +12,7 @@ MySQL - 10.4.24-MariaDB : Database - restaurantedb
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`restaurantedb` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`restaurantedb` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
 
 USE `restaurantedb`;
 
@@ -33,14 +33,17 @@ CREATE TABLE `contratos` (
   KEY `fk_idturno_cont` (`idturno`),
   CONSTRAINT `fk_idempleado_cont` FOREIGN KEY (`idempleado`) REFERENCES `personas` (`idpersona`),
   CONSTRAINT `fk_idturno_cont` FOREIGN KEY (`idturno`) REFERENCES `turnos` (`idturno`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `contratos` */
 
 insert  into `contratos`(`idcontrato`,`idempleado`,`cargo`,`fechainicio`,`fechatermino`,`idturno`,`estado`) values 
 (1,6,'Administrador','2023-05-29 19:40:49',NULL,NULL,'1'),
 (2,4,'Chef','2023-05-29 19:40:49',NULL,2,'1'),
-(3,2,'Mesero','2023-05-29 19:40:49',NULL,1,'1');
+(3,2,'Mesero','2023-05-29 19:40:49',NULL,1,'1'),
+(4,39,'Mesero','2023-06-01 10:31:09',NULL,2,'1'),
+(5,40,'Chef','2023-06-01 10:31:09',NULL,3,'1'),
+(6,41,'Mesero','2023-06-01 10:31:09',NULL,3,'1');
 
 /*Table structure for table `detalle_venta` */
 
@@ -59,7 +62,7 @@ CREATE TABLE `detalle_venta` (
   CONSTRAINT `fk_idventa_det` FOREIGN KEY (`idventa`) REFERENCES `ventas` (`idventa`),
   CONSTRAINT `ck_cantidad_det` CHECK (`cantidad` > 0),
   CONSTRAINT `ck_precioproducto_det` CHECK (`precioproducto` >= 0)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `detalle_venta` */
 
@@ -76,7 +79,24 @@ insert  into `detalle_venta`(`iddetalleventa`,`idventa`,`idproducto`,`cantidad`,
 (10,6,15,2,30.00),
 (11,7,14,2,12.00),
 (12,7,9,2,5.00),
-(13,7,11,2,38.00);
+(13,7,11,2,38.00),
+(14,7,10,1,15.00),
+(15,8,15,2,30.00),
+(16,8,10,2,15.00),
+(17,8,16,2,12.00),
+(18,9,9,3,5.00),
+(19,9,6,2,5.00),
+(20,9,2,5,25.00),
+(21,9,11,2,38.00),
+(22,9,4,1,64.00),
+(23,9,3,1,45.00),
+(24,10,6,1,5.00),
+(25,10,13,2,35.00),
+(26,10,17,2,18.00),
+(27,10,9,1,5.00),
+(28,11,18,3,8.00),
+(29,11,6,2,5.00),
+(30,11,5,2,32.00);
 
 /*Table structure for table `mesas` */
 
@@ -91,14 +111,14 @@ CREATE TABLE `mesas` (
   UNIQUE KEY `uk_nombremesa_mes` (`nombremesa`),
   CONSTRAINT `ck_capacidad_mes` CHECK (`capacidad` > 0),
   CONSTRAINT `ck_estado_mes` CHECK (`estado` in ('D','O','R','M'))
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `mesas` */
 
 insert  into `mesas`(`idmesa`,`nombremesa`,`capacidad`,`estado`) values 
-(1,'Mesa 1',3,'O'),
+(1,'Mesa 1',3,'D'),
 (2,'Mesa 2',4,'D'),
-(3,'Mesa 3',3,'O'),
+(3,'Mesa 3',3,'D'),
 (4,'Mesa 4',6,'D'),
 (5,'Mesa 5',2,'D'),
 (6,'Mesa 6',5,'D'),
@@ -125,7 +145,7 @@ CREATE TABLE `personas` (
   PRIMARY KEY (`idpersona`),
   UNIQUE KEY `uk_dni_per` (`dni`),
   CONSTRAINT `ck_dni_per` CHECK (`dni` regexp '^[0-9]{8}$')
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `personas` */
 
@@ -167,7 +187,12 @@ insert  into `personas`(`idpersona`,`apellidos`,`nombres`,`dni`,`telefono`,`corr
 (35,'Torres Ramírez','Juan','52473918','912345678','jtorres@gmail.com','Calle Luna, 234'),
 (36,'Pérez Sánchez','María','74291835','667890123','mperez@hotmail.com','Avenida Libertad, 567'),
 (37,'López Martínez','Pablo','61394827','644567890','plopez@gmail.com','Calle Mayor, 890'),
-(38,'Rodríguez Torres','Laura','31972846','912345678','lrodriguez@gmail.com','Calle Central, 123');
+(38,'Rodríguez Torres','Laura','31972846','912345678','lrodriguez@gmail.com','Calle Central, 123'),
+(39,'López Ramírez','María','45682197','665478912','mlopez@gmail.com','Calle Principal, 123'),
+(40,'Pérez Martínez','Juan','78965432','669874561','jpmartinez@gmail.com','Calle Secundaria, 789'),
+(41,'Sánchez Herrera','Laura','12345678','668765432','lsanchez@gmail.com','Avenida Norte, 321'),
+(42,'Torres Marcelo','Luzmila','45454545',NULL,NULL,NULL),
+(43,'Yauri De Ccente','Leona','23241023',NULL,NULL,NULL);
 
 /*Table structure for table `productos` */
 
@@ -184,7 +209,7 @@ CREATE TABLE `productos` (
   UNIQUE KEY `uk_producto_pla` (`tipoproducto`,`nombreproducto`),
   CONSTRAINT `ck_precio_pla` CHECK (`precio` > 0),
   CONSTRAINT `ck_stock_pla` CHECK (`stock` >= 0)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `productos` */
 
@@ -220,7 +245,7 @@ CREATE TABLE `turnos` (
   `horafin` time NOT NULL,
   PRIMARY KEY (`idturno`),
   UNIQUE KEY `uk_turno_tur` (`turno`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `turnos` */
 
@@ -247,7 +272,7 @@ CREATE TABLE `usuarios` (
   UNIQUE KEY `uk_nombreusuario_usu` (`nombreusuario`),
   CONSTRAINT `fk_idempleado_usu` FOREIGN KEY (`idempleado`) REFERENCES `contratos` (`idcontrato`),
   CONSTRAINT `ck_nivelacceso_usu` CHECK (`nivelacceso` in ('A','E','S'))
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `usuarios` */
 
@@ -283,15 +308,19 @@ CREATE TABLE `ventas` (
   CONSTRAINT `ck_metodopago_ven` CHECK (`metodopago` in ('E','T','Y','P')),
   CONSTRAINT `ck_montopagado_ven` CHECK (`montopagado` > 0),
   CONSTRAINT `ck_estado_ven` CHECK (`estado` in ('PA','PE','CA'))
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `ventas` */
 
 insert  into `ventas`(`idventa`,`idmesa`,`idcliente`,`idempleado`,`fechahoraorden`,`tipocomprobante`,`numcomprobante`,`metodopago`,`fechahorapago`,`montopagado`,`estado`) values 
 (1,2,7,3,'2023-05-29 19:40:50','BE','BLE-000001','Y','2023-05-29 20:10:50',130.00,'PA'),
 (2,3,NULL,3,'2023-05-29 19:40:50','BS','BLS-000002','E','2023-05-29 20:10:50',50.00,'PA'),
-(6,1,NULL,3,'2023-05-30 15:21:11',NULL,NULL,NULL,NULL,NULL,'PE'),
-(7,3,NULL,3,'2023-05-30 15:51:25',NULL,NULL,NULL,NULL,NULL,'PE');
+(6,1,NULL,3,'2023-06-01 11:21:11','BS','BLS-000003','T','2023-06-01 12:11:23',138.00,'PA'),
+(7,3,28,4,'2023-06-01 11:32:25','BE','BLE-000004','T','2023-06-01 12:34:14',125.00,'PA'),
+(8,5,42,6,'2023-06-01 12:00:26','BE','BLE-000005','T','2023-06-01 12:47:24',114.00,'PA'),
+(9,6,NULL,3,'2023-06-01 11:58:08','BS','BLS-000006','E','2023-06-01 12:51:02',335.00,'PA'),
+(10,8,43,4,'2023-06-01 14:21:57','BE','BLE-000007','Y','2023-06-01 14:48:17',116.00,'PA'),
+(11,1,NULL,4,'2023-06-01 14:50:20','BS','BLS-000008','E','2023-06-01 15:25:04',98.00,'PA');
 
 /* Procedure structure for procedure `ContarClientes` */
 
@@ -416,7 +445,7 @@ DELIMITER $$
 
 /*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_empleados_listar`()
 BEGIN
-	SELECT 	contratos.idempleado, personas.`apellidos`, personas.`nombres`,
+	SELECT 	contratos.idcontrato, personas.`apellidos`, personas.`nombres`,
 		contratos.`cargo`, contratos.`idturno`
 		FROM contratos
 		INNER JOIN personas ON personas.`idpersona` = contratos.`idempleado`
@@ -454,6 +483,20 @@ BEGIN
 END */$$
 DELIMITER ;
 
+/* Procedure structure for procedure `spu_personas_buscar` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `spu_personas_buscar` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_personas_buscar`(in _dni char(8))
+begin
+	select * 
+		from personas
+		where dni = _dni;
+end */$$
+DELIMITER ;
+
 /* Procedure structure for procedure `spu_personas_listar` */
 
 /*!50003 DROP PROCEDURE IF EXISTS  `spu_personas_listar` */;
@@ -476,7 +519,7 @@ DELIMITER $$
 
 /*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_productos_cargaropciones`()
 BEGIN
-	SELECT idproducto, nombreproducto, precio, stock
+	SELECT idproducto, tipoproducto, nombreproducto, precio, stock
 		FROM productos
 		ORDER BY nombreproducto;
 END */$$
@@ -581,6 +624,67 @@ begin
 		inner join mesas on mesas.`idmesa` = ventas.`idmesa`
 		where mesas.`idmesa` = _idmesa and ventas.`estado` = 'PE';
 end */$$
+DELIMITER ;
+
+/* Procedure structure for procedure `spu_ventas_realizarpago` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `spu_ventas_realizarpago` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_ventas_realizarpago`(
+IN _idventa		INT,
+IN _apellidos		VARCHAR(50),
+IN _nombres		VARCHAR(50),
+IN _dni			CHAR(8),
+IN _tipocomprobante 	CHAR(2),
+IN _metodopago 		CHAR(1),
+IN _montopagado 	DECIMAL(7,2)
+)
+BEGIN
+	-- Variable que guardará el num documento generado
+	DECLARE v_numcomprobante 	VARCHAR(10);
+	DECLARE v_prefijo 		CHAR(4);
+	DECLARE v_idpersona 		INT;
+	
+	IF _tipocomprobante = 'BS' THEN SET v_prefijo = 'BLS-';
+	ELSE SET v_prefijo = 'BLE-'; END IF;
+	
+	SET v_numcomprobante = CONCAT(v_prefijo, LPAD((SELECT MAX(SUBSTRING(numcomprobante, 5))+1 FROM ventas), 6, '0'));
+
+	IF _tipocomprobante = 'BS' THEN
+		-- Actualizamos la venta con cliente en NULL
+		UPDATE ventas SET 
+			idcliente = NULL,
+			tipocomprobante = _tipocomprobante,
+			numcomprobante = v_numcomprobante,
+			metodopago = _metodopago,
+			fechahorapago = NOW(),
+			montopagado = _montopagado,
+			estado = 'PA'
+		WHERE idventa = _idventa;
+	ELSE 
+		-- Buscar el ID del cliente en la tabla personas
+		SET v_idpersona = (SELECT idpersona FROM personas WHERE dni = _dni);
+		
+		IF v_idpersona IS NULL THEN
+			-- Insertamos nuevo cliente en la tabla personas
+			INSERT INTO personas (apellidos, nombres, dni) VALUES
+				(_apellidos, _nombres, _dni);
+			SET v_idpersona = LAST_INSERT_ID();
+		END IF;
+		
+		UPDATE ventas SET 
+			idcliente = v_idpersona,
+			tipocomprobante = _tipocomprobante,
+			numcomprobante = v_numcomprobante,
+			metodopago = _metodopago,
+			fechahorapago = NOW(),
+			montopagado = _montopagado,
+			estado = 'PA'
+		WHERE idventa = _idventa;
+	END IF;
+END */$$
 DELIMITER ;
 
 /* Procedure structure for procedure `spu_ventas_registrar` */
