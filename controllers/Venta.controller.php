@@ -78,6 +78,15 @@ if (isset($_POST['operacion'])) {
     $resultado = $venta->listarRangoFechas($datos);
     echo json_encode($resultado);
   }
+  
+  if ($_POST['operacion'] == 'listarEmpleadoMesa') {
+    $datos = [
+      "idempleado"  => $_POST["idempleado"],
+      "idmesa"      => $_POST["idmesa"]
+    ];
+    $resultado = $venta->listarEmpleadoMesa($datos);
+    echo json_encode($resultado);
+  }
 
 }
 

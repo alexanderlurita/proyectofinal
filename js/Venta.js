@@ -156,7 +156,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 txTotalPagar.value = parseFloat(totalPagar).toFixed(2);
               })
             mdProcesarPago.toggle();
-            alert(idMesaCard)
           })
       }
     }

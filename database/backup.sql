@@ -62,7 +62,7 @@ CREATE TABLE `detalle_venta` (
   CONSTRAINT `fk_idventa_det` FOREIGN KEY (`idventa`) REFERENCES `ventas` (`idventa`),
   CONSTRAINT `ck_cantidad_det` CHECK (`cantidad` > 0),
   CONSTRAINT `ck_precioproducto_det` CHECK (`precioproducto` >= 0)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `detalle_venta` */
 
@@ -96,7 +96,20 @@ insert  into `detalle_venta`(`iddetalleventa`,`idventa`,`idproducto`,`cantidad`,
 (27,10,9,1,5.00),
 (28,11,18,3,8.00),
 (29,11,6,2,5.00),
-(30,11,5,2,32.00);
+(30,11,5,2,32.00),
+(31,12,2,2,25.00),
+(32,12,14,5,12.00),
+(33,12,4,2,64.00),
+(34,12,15,4,30.00),
+(35,12,13,1,35.00),
+(36,12,7,3,25.00),
+(37,12,10,1,15.00),
+(38,12,9,5,5.00),
+(39,12,6,1,5.00),
+(40,13,18,3,8.00),
+(41,13,12,3,10.00),
+(42,14,2,2,25.00),
+(43,14,11,2,38.00);
 
 /*Table structure for table `mesas` */
 
@@ -308,7 +321,7 @@ CREATE TABLE `ventas` (
   CONSTRAINT `ck_metodopago_ven` CHECK (`metodopago` in ('E','T','Y','P')),
   CONSTRAINT `ck_montopagado_ven` CHECK (`montopagado` > 0),
   CONSTRAINT `ck_estado_ven` CHECK (`estado` in ('PA','PE','CA'))
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `ventas` */
 
@@ -320,7 +333,10 @@ insert  into `ventas`(`idventa`,`idmesa`,`idcliente`,`idempleado`,`fechahoraorde
 (8,5,42,6,'2023-06-01 12:00:26','BE','BLE-000005','T','2023-06-01 12:47:24',114.00,'PA'),
 (9,6,NULL,3,'2023-06-01 11:58:08','BS','BLS-000006','E','2023-06-01 12:51:02',335.00,'PA'),
 (10,8,43,4,'2023-06-01 14:21:57','BE','BLE-000007','Y','2023-06-01 14:48:17',116.00,'PA'),
-(11,1,NULL,4,'2023-06-01 14:50:20','BS','BLS-000008','E','2023-06-01 15:25:04',98.00,'PA');
+(11,1,NULL,4,'2023-06-01 14:50:20','BS','BLS-000008','E','2023-06-01 15:25:04',98.00,'PA'),
+(12,10,19,6,'2023-06-01 18:19:12','BE','BLE-000009','T','2023-06-01 20:21:56',513.00,'PA'),
+(13,12,NULL,3,'2023-06-01 21:23:05','BS','BLS-000010','P','2023-06-01 21:52:39',54.00,'PA'),
+(14,1,NULL,3,'2023-06-02 14:19:01','BS','BLS-000011','E','2023-06-02 14:33:16',126.00,'PA');
 
 /* Procedure structure for procedure `ContarClientes` */
 
@@ -608,6 +624,26 @@ BEGIN
 		inner join mesas on mesas.`idmesa` = ventas.`idmesa`
 		left join personas on personas.`idpersona` = ventas.`idcliente`
 		WHERE DATE(fechahoraorden) between _fechainicio and _fechafin;
+END */$$
+DELIMITER ;
+
+/* Procedure structure for procedure `spu_ventas_listarVentasEmpleadoMesa` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `spu_ventas_listarVentasEmpleadoMesa` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_ventas_listarVentasEmpleadoMesa`(
+IN _idempleado	INT,
+IN _idmesa	tinyint
+)
+BEGIN
+    SELECT  ventas.idventa, mesas.nombremesa, date(ventas.fechahoraorden) as 'fechaorden', 
+	    time(ventas.fechahoraorden) as 'apertura', time(ventas.fechahorapago) as 'cierre',
+	    ventas.montopagado
+	    FROM ventas
+	    inner join mesas on mesas.idmesa = ventas.idmesa
+	    WHERE ventas.idempleado = _idempleado and ventas.idmesa = _idmesa;
 END */$$
 DELIMITER ;
 

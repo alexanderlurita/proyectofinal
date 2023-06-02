@@ -311,3 +311,19 @@ BEGIN
 END $$
 
 CALL spu_ventas_listarPorRangoDeFechas('2023/06/01', '2023/06/01')
+
+-- REPORTE 02
+DELIMITER $$
+CREATE PROCEDURE spu_ventas_listarVentasEmpleadoMesa
+(
+IN _idempleado	INT,
+IN _idmesa	TINYINT
+)
+BEGIN
+    SELECT  ventas.idventa, mesas.nombremesa, DATE(ventas.fechahoraorden) AS 'fechaorden', 
+	    TIME(ventas.fechahoraorden) AS 'apertura', TIME(ventas.fechahorapago) AS 'cierre',
+	    ventas.montopagado
+	    FROM ventas
+	    INNER JOIN mesas ON mesas.idmesa = ventas.idmesa
+	    WHERE ventas.idempleado = _idempleado AND ventas.idmesa = _idmesa;
+END $$

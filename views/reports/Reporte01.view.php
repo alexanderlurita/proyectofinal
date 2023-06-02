@@ -1,4 +1,4 @@
-<h3>Visualizar ventas por intervalo de fechas</h3>
+<h3>Reporte de ventas por intervalo de fechas</h3>
 <hr>
 
 <div class="row mb-3 g-3 align-items-center">
@@ -83,18 +83,22 @@
         .then(res => res.json())
         .then(data => {
           tbVentas.innerHTML = '';
-          data.forEach(element => {
-            const fila = `
-              <tr>
-                <td>${element.idventa}</td>
-                <td>${element.nombremesa}</td>
-                <td>${element.cliente != null ? element.cliente : "---" }</td>
-                <td>${element.fechahoraorden}</td>
-                <td>${element.montopagado}</td>
-              </tr>
-            `;
-            tbVentas.innerHTML += fila;
-          });
+          if (data.length) {
+            data.forEach(element => {
+              const fila = `
+                <tr>
+                  <td>${element.idventa}</td>
+                  <td>${element.nombremesa}</td>
+                  <td>${element.cliente != null ? element.cliente : "---" }</td>
+                  <td>${element.fechahoraorden}</td>
+                  <td>${element.montopagado}</td>
+                </tr>
+              `;
+              tbVentas.innerHTML += fila;
+            });
+          } else {
+            alert("No se encontraron registros");
+          }
         })
     }
   }
@@ -117,7 +121,7 @@
   }
 
   btBuscar.addEventListener("click", cargarVentas);
-  btExportar.addEventListener("click", exportar)
+  btExportar.addEventListener("click", exportar);
 
   //Funciones automáticas
   formatearFechas();

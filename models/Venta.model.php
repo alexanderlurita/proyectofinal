@@ -140,6 +140,18 @@ class Venta extends Conexion{
     }
   }
 
+  public function listarEmpleadoMesa($datos = []) {
+    try {
+      $consulta = $this->conexion->prepare("CALL spu_ventas_listarVentasEmpleadoMesa(?,?)");
+      $consulta->execute(array(
+        $datos["idempleado"],
+        $datos["idmesa"]
+      ));
+      return $consulta->fetchAll(PDO::FETCH_ASSOC);
+    } catch(Exception $e) {
+      die($e->getMessage());
+    }
+  }
   
 }
 
