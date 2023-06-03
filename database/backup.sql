@@ -62,7 +62,7 @@ CREATE TABLE `detalle_venta` (
   CONSTRAINT `fk_idventa_det` FOREIGN KEY (`idventa`) REFERENCES `ventas` (`idventa`),
   CONSTRAINT `ck_cantidad_det` CHECK (`cantidad` > 0),
   CONSTRAINT `ck_precioproducto_det` CHECK (`precioproducto` >= 0)
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `detalle_venta` */
 
@@ -109,7 +109,32 @@ insert  into `detalle_venta`(`iddetalleventa`,`idventa`,`idproducto`,`cantidad`,
 (40,13,18,3,8.00),
 (41,13,12,3,10.00),
 (42,14,2,2,25.00),
-(43,14,11,2,38.00);
+(43,14,11,2,38.00),
+(44,15,19,3,28.00),
+(45,16,2,5,25.00),
+(46,16,17,1,18.00),
+(47,16,15,6,30.00),
+(48,16,16,4,12.00),
+(49,16,6,2,5.00),
+(50,16,14,3,12.00),
+(51,17,13,2,35.00),
+(52,17,11,1,38.00),
+(53,18,5,2,32.00),
+(54,18,6,2,5.00),
+(55,19,7,3,25.00),
+(56,19,4,3,64.00),
+(57,19,9,3,5.00),
+(58,19,16,1,12.00),
+(59,17,9,2,5.00),
+(60,19,10,1,15.00),
+(61,20,7,2,25.00),
+(62,20,4,2,64.00),
+(63,20,9,2,5.00),
+(64,21,16,3,12.00),
+(65,21,13,3,35.00),
+(66,21,11,3,38.00),
+(67,21,6,2,5.00),
+(68,21,10,2,15.00);
 
 /*Table structure for table `mesas` */
 
@@ -158,7 +183,7 @@ CREATE TABLE `personas` (
   PRIMARY KEY (`idpersona`),
   UNIQUE KEY `uk_dni_per` (`dni`),
   CONSTRAINT `ck_dni_per` CHECK (`dni` regexp '^[0-9]{8}$')
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `personas` */
 
@@ -205,7 +230,8 @@ insert  into `personas`(`idpersona`,`apellidos`,`nombres`,`dni`,`telefono`,`corr
 (40,'Pérez Martínez','Juan','78965432','669874561','jpmartinez@gmail.com','Calle Secundaria, 789'),
 (41,'Sánchez Herrera','Laura','12345678','668765432','lsanchez@gmail.com','Avenida Norte, 321'),
 (42,'Torres Marcelo','Luzmila','45454545',NULL,NULL,NULL),
-(43,'Yauri De Ccente','Leona','23241023',NULL,NULL,NULL);
+(43,'Yauri De Ccente','Leona','23241023',NULL,NULL,NULL),
+(44,'Gentille Barrios','Cesar Juan','21813572',NULL,NULL,NULL);
 
 /*Table structure for table `productos` */
 
@@ -321,7 +347,7 @@ CREATE TABLE `ventas` (
   CONSTRAINT `ck_metodopago_ven` CHECK (`metodopago` in ('E','T','Y','P')),
   CONSTRAINT `ck_montopagado_ven` CHECK (`montopagado` > 0),
   CONSTRAINT `ck_estado_ven` CHECK (`estado` in ('PA','PE','CA'))
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `ventas` */
 
@@ -336,7 +362,14 @@ insert  into `ventas`(`idventa`,`idmesa`,`idcliente`,`idempleado`,`fechahoraorde
 (11,1,NULL,4,'2023-06-01 14:50:20','BS','BLS-000008','E','2023-06-01 15:25:04',98.00,'PA'),
 (12,10,19,6,'2023-06-01 18:19:12','BE','BLE-000009','T','2023-06-01 20:21:56',513.00,'PA'),
 (13,12,NULL,3,'2023-06-01 21:23:05','BS','BLS-000010','P','2023-06-01 21:52:39',54.00,'PA'),
-(14,1,NULL,3,'2023-06-02 14:19:01','BS','BLS-000011','E','2023-06-02 14:33:16',126.00,'PA');
+(14,1,NULL,3,'2023-06-02 14:19:01','BS','BLS-000011','E','2023-06-02 14:33:16',126.00,'PA'),
+(15,2,NULL,4,'2023-06-02 17:05:49','BS','BLS-000012','E','2023-06-02 17:07:42',84.00,'PA'),
+(16,4,32,3,'2023-06-03 11:25:24','BE','BLE-000013','T','2023-06-03 11:29:53',417.00,'PA'),
+(17,7,NULL,4,'2023-06-03 11:27:41','BS','BLS-000015','Y','2023-06-03 16:39:33',118.00,'PA'),
+(18,5,NULL,4,'2023-06-03 11:28:49','BS','BLS-000014','E','2023-06-03 15:48:52',74.00,'PA'),
+(19,3,44,3,'2023-06-03 15:49:32','BE','BLE-000016','T','2023-06-03 17:36:03',309.00,'PA'),
+(20,12,NULL,6,'2023-06-03 17:36:53','BS','BLS-000018','E','2023-06-03 18:16:10',188.00,'PA'),
+(21,1,31,3,'2023-06-03 17:47:31','BE','BLE-000017','T','2023-06-03 18:15:47',295.00,'PA');
 
 /* Procedure structure for procedure `ContarClientes` */
 

@@ -1,6 +1,7 @@
 <h3>Registro de órdenes</h3>
 <hr>
 
+<!-- Contenedor de los cards (mesas) -->
 <div class="row mt-1 rows-cols-1 row-cols-md-5 g-4" id="contenedor-mesas">
   
 </div>
