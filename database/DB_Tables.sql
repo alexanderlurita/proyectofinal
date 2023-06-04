@@ -75,6 +75,7 @@ CREATE TABLE productos
 	descripcion		VARCHAR(150)	NULL,
 	precio			DECIMAL(7,2)	NOT NULL,
 	stock			TINYINT 	NULL,
+	estado 			CHAR(1) 	NOT NULL DEFAULT '1'
 	CONSTRAINT uk_producto_pla UNIQUE (tipoproducto, nombreproducto),
 	CONSTRAINT ck_precio_pla CHECK (precio > 0),
 	CONSTRAINT ck_stock_pla CHECK (stock >= 0)

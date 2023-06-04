@@ -17,6 +17,9 @@ switch ($vista) {
   case 'producto':
     $contenido = 'views/Producto.view.php';
     break;
+  case 'mesa':
+    $contenido = 'views/Mesa.view.php';
+    break;
   case 'reporte01':
     $contenido = 'views/reports/Reporte01.view.php';
     break;
@@ -40,6 +43,10 @@ switch ($vista) {
 
   <!-- Bootstrap 5.3 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+
+  <!-- DataTable -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
 
   <link rel="stylesheet" href="./styles/dashboard.css">
 </head>
@@ -68,6 +75,14 @@ switch ($vista) {
   
   <!-- FontAwesome -->
   <script src="https://kit.fontawesome.com/f5edb5ee55.js" crossorigin="anonymous"></script>
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- DataTable -->
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 
   <script src="./js/dashboard.js"></script>
 

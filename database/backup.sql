@@ -62,7 +62,7 @@ CREATE TABLE `detalle_venta` (
   CONSTRAINT `fk_idventa_det` FOREIGN KEY (`idventa`) REFERENCES `ventas` (`idventa`),
   CONSTRAINT `ck_cantidad_det` CHECK (`cantidad` > 0),
   CONSTRAINT `ck_precioproducto_det` CHECK (`precioproducto` >= 0)
-) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `detalle_venta` */
 
@@ -134,7 +134,9 @@ insert  into `detalle_venta`(`iddetalleventa`,`idventa`,`idproducto`,`cantidad`,
 (65,21,13,3,35.00),
 (66,21,11,3,38.00),
 (67,21,6,2,5.00),
-(68,21,10,2,15.00);
+(68,21,10,2,15.00),
+(69,22,23,2,6.00),
+(70,22,5,2,32.00);
 
 /*Table structure for table `mesas` */
 
@@ -244,34 +246,41 @@ CREATE TABLE `productos` (
   `descripcion` varchar(150) DEFAULT NULL,
   `precio` decimal(7,2) NOT NULL,
   `stock` tinyint(4) DEFAULT NULL,
+  `estado` char(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`idproducto`),
   UNIQUE KEY `uk_producto_pla` (`tipoproducto`,`nombreproducto`),
   CONSTRAINT `ck_precio_pla` CHECK (`precio` > 0),
   CONSTRAINT `ck_stock_pla` CHECK (`stock` >= 0)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `productos` */
 
-insert  into `productos`(`idproducto`,`tipoproducto`,`nombreproducto`,`descripcion`,`precio`,`stock`) values 
-(1,'Entrada','Tequeños de Lomo Saltado','8 unidades de tequeños rellenos de lomo saltado criollo con guacamole',20.00,NULL),
-(2,'Entrada','Club Sandwich','Pollo, jamón, queso, palta, lechuga y tomate acompañado de papas fritas',25.00,NULL),
-(3,'Plato de fondo','Rocoto Relleno','Tradicional rocoto relleno arequipeño, acompañado de pastel de papas',45.00,NULL),
-(4,'Plato de fondo','Lomo Saltado','Clásico lomo fino saltado de res acompañado de papas fritas y arroz blanco',64.00,NULL),
-(5,'Postre','Charlotte de maracuya','Charlotte de maracuyá, naranja y muña',32.00,20),
-(6,'Bebida','Inca Kola 600ml','Vaso de Inca Kola + hielos',5.00,16),
-(7,'Entrada','Anticucho de corazón especial','Dos palitos de trozos tiernos de corazón de res, acompañados con choclo José Antonio, papa dorada y salsa criolla',25.00,NULL),
-(8,'Plato de fondo','Cau Cau','Receta en base a trozos de mondongo y papa, acompañada con arroz blanco',40.00,NULL),
-(9,'Bebida','Chicha morada','Vaso grande de chicha morada + hielos',5.00,NULL),
-(10,'Postre','Tarta de Manzana','Deliciosa tarta de manzana con crujiente de canela y helado de vainilla',15.00,30),
-(11,'Plato de fondo','Lomo de Res a la Parrilla','Tierno lomo de res a la parrilla con papas fritas y ensalada mixta',38.00,NULL),
-(12,'Bebida','Mojito Clásico','Refrescante cóctel de mojito con lima, menta fresca y ron blanco',10.00,NULL),
-(13,'Entrada','Ceviche Mixto','Ceviche de pescado y mariscos con limón, cebolla morada, ají y camote',35.00,NULL),
-(14,'Postre','Flan de Caramelo','Suave y cremoso flan de caramelo con salsa de caramelo y trocitos de almendra',12.00,25),
-(15,'Plato de fondo','Pollo a la Brasa','Jugoso pollo a la brasa acompañado de papas doradas y salsa huancaina',30.00,NULL),
-(16,'Bebida','Margarita de Fresa','Refrescante margarita de fresa con tequila, jugo de limón y azúcar',12.00,NULL),
-(17,'Entrada','Empanadas Argentinas','Deliciosas empanadas argentinas rellenas de carne, pollo o verduras',18.00,NULL),
-(18,'Postre','Helado de Chocolate','Delicioso helado de chocolate con trocitos de chocolate negro y salsa de chocolate caliente',8.00,21),
-(19,'Plato de fondo','Pasta Alfredo con Camarones','Pasta al dente con salsa Alfredo y camarones salteados en mantequilla y ajo',28.00,NULL);
+insert  into `productos`(`idproducto`,`tipoproducto`,`nombreproducto`,`descripcion`,`precio`,`stock`,`estado`) values 
+(1,'Entrada','Tequeños de Lomo Saltado','8 unidades de tequeños rellenos de lomo saltado criollo con guacamole',20.00,NULL,'1'),
+(2,'Entrada','Club Sandwich','Pollo, jamón, queso, palta, lechuga y tomate acompañado de papas fritas',25.00,NULL,'1'),
+(3,'Plato de fondo','Rocoto Relleno','Tradicional rocoto relleno arequipeño, acompañado de pastel de papas',45.00,NULL,'1'),
+(4,'Plato de fondo','Lomo Saltado','Clásico lomo fino saltado de res acompañado de papas fritas y arroz blanco',64.00,NULL,'1'),
+(5,'Postre','Charlotte de maracuya','Charlotte de maracuyá, naranja y muña',32.00,20,'1'),
+(6,'Bebida','Inca Kola 600ml','Vaso de Inca Kola + hielos',5.00,16,'1'),
+(7,'Entrada','Anticucho de corazón especial','Dos palitos de trozos tiernos de corazón de res, acompañados con choclo José Antonio, papa dorada y salsa criolla',25.00,NULL,'1'),
+(8,'Plato de fondo','Cau Cau','Receta en base a trozos de mondongo y papa, acompañada con arroz blanco',40.00,NULL,'1'),
+(9,'Bebida','Chicha morada','Vaso grande de chicha morada + hielos',5.00,NULL,'1'),
+(10,'Postre','Tarta de Manzana','Deliciosa tarta de manzana con crujiente de canela y helado de vainilla',15.00,30,'1'),
+(11,'Plato de fondo','Lomo de Res a la Parrilla','Tierno lomo de res a la parrilla con papas fritas y ensalada mixta',38.00,NULL,'1'),
+(12,'Bebida','Mojito Clásico','Refrescante cóctel de mojito con lima, menta fresca y ron blanco',10.00,NULL,'1'),
+(13,'Entrada','Ceviche Mixto','Ceviche de pescado y mariscos con limón, cebolla morada, ají y camote',35.00,NULL,'1'),
+(14,'Postre','Flan de Caramelo','Suave y cremoso flan de caramelo con salsa de caramelo y trocitos de almendra',12.00,25,'1'),
+(15,'Plato de fondo','Pollo a la Brasa','Jugoso pollo a la brasa acompañado de papas doradas y salsa huancaina',30.00,NULL,'1'),
+(16,'Bebida','Margarita de Fresa','Refrescante margarita de fresa con tequila, jugo de limón y azúcar',12.00,NULL,'1'),
+(17,'Entrada','Empanadas Argentinas','Deliciosas empanadas argentinas rellenas de carne, pollo o verduras',18.00,NULL,'1'),
+(18,'Postre','Helado de Chocolate','Delicioso helado de chocolate con trocitos de chocolate negro y salsa de chocolate caliente',8.00,21,'1'),
+(19,'Plato de fondo','Pasta Alfredo con Camarones','Pasta al dente con salsa Alfredo y camarones salteados en mantequilla y ajo',28.00,NULL,'1'),
+(20,'Entrada','Papas fritas','Porción generosa de papas fritas crujientes y doradas',12.00,NULL,'1'),
+(21,'Bebida','Coca-Cola','Refresco de cola en lata de 355 ml',4.00,24,'1'),
+(22,'Plato de fondo','Lasaña de Carne','Deliciosa lasaña de carne con capas de pasta, salsa de tomate y queso',30.00,NULL,'1'),
+(23,'Bebida','Café Latte','Café espresso con leche caliente y espuma de leche',6.00,NULL,'1'),
+(24,'Postre','Tiramisú','Postre italiano con capas de bizcocho empapado en café y crema de mascarpone',10.00,15,'1'),
+(25,'Plato de fondo','Ají de Gallina','Plato típico peruano a base de gallina deshilachada en una salsa de ají amarillo y nueces',30.00,NULL,'1');
 
 /*Table structure for table `turnos` */
 
@@ -347,7 +356,7 @@ CREATE TABLE `ventas` (
   CONSTRAINT `ck_metodopago_ven` CHECK (`metodopago` in ('E','T','Y','P')),
   CONSTRAINT `ck_montopagado_ven` CHECK (`montopagado` > 0),
   CONSTRAINT `ck_estado_ven` CHECK (`estado` in ('PA','PE','CA'))
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `ventas` */
 
@@ -369,7 +378,8 @@ insert  into `ventas`(`idventa`,`idmesa`,`idcliente`,`idempleado`,`fechahoraorde
 (18,5,NULL,4,'2023-06-03 11:28:49','BS','BLS-000014','E','2023-06-03 15:48:52',74.00,'PA'),
 (19,3,44,3,'2023-06-03 15:49:32','BE','BLE-000016','T','2023-06-03 17:36:03',309.00,'PA'),
 (20,12,NULL,6,'2023-06-03 17:36:53','BS','BLS-000018','E','2023-06-03 18:16:10',188.00,'PA'),
-(21,1,31,3,'2023-06-03 17:47:31','BE','BLE-000017','T','2023-06-03 18:15:47',295.00,'PA');
+(21,1,31,3,'2023-06-03 17:47:31','BE','BLE-000017','T','2023-06-03 18:15:47',295.00,'PA'),
+(22,1,NULL,3,'2023-06-04 16:47:45','BS','BLS-000019','E','2023-06-04 17:22:42',76.00,'PA');
 
 /* Procedure structure for procedure `ContarClientes` */
 
@@ -560,6 +570,21 @@ BEGIN
 END */$$
 DELIMITER ;
 
+/* Procedure structure for procedure `spu_productos_cambiarestado` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `spu_productos_cambiarestado` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_productos_cambiarestado`(
+in _idproducto 	int,
+in _estado 	char(1)
+)
+begin
+	update productos set estado = _estado where idproducto = _idproducto;
+End */$$
+DELIMITER ;
+
 /* Procedure structure for procedure `spu_productos_cargaropciones` */
 
 /*!50003 DROP PROCEDURE IF EXISTS  `spu_productos_cargaropciones` */;
@@ -570,8 +595,86 @@ DELIMITER $$
 BEGIN
 	SELECT idproducto, tipoproducto, nombreproducto, precio, stock
 		FROM productos
+		where estado = '1'
 		ORDER BY nombreproducto;
 END */$$
+DELIMITER ;
+
+/* Procedure structure for procedure `spu_productos_editar` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `spu_productos_editar` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_productos_editar`(
+in _idproducto		int,
+IN _tipoproducto 	VARCHAR(40),
+IN _nombreproducto	VARCHAR(50),
+IN _descripcion		VARCHAR(150),
+IN _precio		DECIMAL(7,2),
+IN _stock		TINYINT
+)
+BEGIN 
+	IF _descripcion = '' THEN SET _descripcion = NULL; END IF;
+	IF _stock = -1 THEN SET _stock = NULL; END IF;
+	update productos set
+		tipoproducto = _tipoproducto,
+		nombreproducto = _nombreproducto,
+		descripcion = _descripcion,
+		precio = _precio,
+		stock = _stock
+	where idproducto = _idproducto;
+END */$$
+DELIMITER ;
+
+/* Procedure structure for procedure `spu_productos_getdata` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `spu_productos_getdata` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_productos_getdata`(in _idproducto int)
+begin 
+	select idproducto, tipoproducto, nombreproducto, descripcion, precio, stock 
+		from productos 
+		where idproducto = _idproducto;
+end */$$
+DELIMITER ;
+
+/* Procedure structure for procedure `spu_productos_listar` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `spu_productos_listar` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_productos_listar`()
+begin
+	SELECT idproducto, tipoproducto, nombreproducto, descripcion, precio, stock
+		FROM productos
+		WHERE estado = '1'
+		ORDER BY idproducto desc;
+end */$$
+DELIMITER ;
+
+/* Procedure structure for procedure `spu_productos_registrar` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `spu_productos_registrar` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_productos_registrar`(
+in _tipoproducto 	varchar(40),
+in _nombreproducto	varchar(50),
+in _descripcion		varchar(150),
+in _precio		decimal(7,2),
+in _stock		tinyint
+)
+begin 
+	if _descripcion = '' then set _descripcion = null; end if;
+	if _stock = -1 then set _stock = null; end if;
+	insert into productos (tipoproducto, nombreproducto, descripcion, precio, stock) values
+		(_tipoproducto, _nombreproducto, _descripcion, _precio, _stock);
+end */$$
 DELIMITER ;
 
 /* Procedure structure for procedure `spu_usuarios_login` */

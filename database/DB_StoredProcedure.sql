@@ -192,13 +192,81 @@ BEGIN
 END $$
 
 -- PRODUCTOS
--- LISTAR
+-- CARGAR OPCIONES
 DELIMITER $$
 CREATE PROCEDURE spu_productos_cargaropciones()
 BEGIN
 	SELECT idproducto, tipoproducto, nombreproducto, precio, stock
 		FROM productos
+		WHERE estado = '1'
 		ORDER BY nombreproducto;
+END $$
+
+-- LISTAR
+DELIMITER $$
+CREATE PROCEDURE spu_productos_listar()
+BEGIN
+	SELECT idproducto, tipoproducto, nombreproducto, descripcion, precio, stock
+		FROM productos
+		WHERE estado = '1'
+		ORDER BY idproducto DESC;
+END $$
+
+-- REGISTRAR PRODUCTO
+DELIMITER $$
+CREATE PROCEDURE spu_productos_registrar
+(
+IN _tipoproducto 	VARCHAR(40),
+IN _nombreproducto	VARCHAR(50),
+IN _descripcion		VARCHAR(150),
+IN _precio		DECIMAL(7,2),
+IN _stock		TINYINT
+)
+BEGIN 
+	IF _descripcion = '' THEN SET _descripcion = NULL; END IF;
+	IF _stock = -1 THEN SET _stock = NULL; END IF;
+	INSERT INTO productos (tipoproducto, nombreproducto, descripcion, precio, stock) VALUES
+		(_tipoproducto, _nombreproducto, _descripcion, _precio, _stock);
+END $$
+
+DELIMITER $$
+CREATE PROCEDURE spu_productos_editar
+(
+IN _idproducto		INT,
+IN _tipoproducto 	VARCHAR(40),
+IN _nombreproducto	VARCHAR(50),
+IN _descripcion		VARCHAR(150),
+IN _precio		DECIMAL(7,2),
+IN _stock		TINYINT
+)
+BEGIN 
+	IF _descripcion = '' THEN SET _descripcion = NULL; END IF;
+	IF _stock = -1 THEN SET _stock = NULL; END IF;
+	UPDATE productos SET
+		tipoproducto = _tipoproducto,
+		nombreproducto = _nombreproducto,
+		descripcion = _descripcion,
+		precio = _precio,
+		stock = _stock
+	WHERE idproducto = _idproducto;
+END $$
+
+DELIMITER $$
+CREATE PROCEDURE spu_productos_getdata(IN _idproducto INT)
+BEGIN 
+	SELECT idproducto, tipoproducto, nombreproducto, descripcion, precio, stock 
+		FROM productos 
+		WHERE idproducto = _idproducto;
+END $$
+
+DELIMITER $$
+CREATE PROCEDURE spu_productos_cambiarestado
+(
+IN _idproducto 	INT,
+IN _estado 	CHAR(1)
+)
+BEGIN
+	UPDATE productos SET estado = _estado WHERE idproducto = _idproducto;
 END $$
 
 -- PERSONAS
